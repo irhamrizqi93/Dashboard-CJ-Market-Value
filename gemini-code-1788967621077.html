@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Pertanian & Market CJ (Jawa Tengah)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1320;
+            color: #e2e8f0;
+        }
+        .font-mono-num {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .glass-card {
+            background: rgba(18, 28, 45, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glass-card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen custom-scrollbar pb-12">
+
+    <!-- TOP BAR / HEADER -->
+    <header class="border-b border-slate-800 bg-slate-900/90 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
+                    <i data-lucide="sprout" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
+                        Dashboard Pertanian & Market CJ
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Jawa Tengah & DIY</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Analisis Luas Panen, Market Value Pestisida, Potensi Beluk, & Profil Insektisida Golongan 30</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <button id="btn-tab-crop" onclick="switchMainTab('crop')" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-500/20 flex items-center gap-1.5">
+                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+                    <span>Market Value & Crop</span>
+                </button>
+                <button id="btn-tab-beluk" onclick="switchMainTab('beluk')" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center gap-1.5">
+                    <i data-lucide="bug" class="w-3.5 h-3.5"></i>
+                    <span>Analisis Beluk & Product Share</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+
+        <!-- FILTER SECTION -->
+        <div class="glass-card rounded-2xl p-4 space-y-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    <i data-lucide="filter" class="w-4 h-4 text-blue-400"></i>
+                    <span>Filter Territory (Wilayah Utama)</span>
+                </div>
+                <div class="text-xs text-slate-400" id="filter-active-label">
+                    Filter Terpilih: <span class="text-emerald-400 font-semibold" id="active-territory-text">Semua Jawa Tengah</span>
+                </div>
+            </div>
+
+            <!-- Territory Buttons -->
+            <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1" id="territory-buttons-container">
+                <!-- Dynamically generated -->
+            </div>
+
+            <!-- Sub-Territory Buttons -->
+            <div class="pt-2 border-t border-slate-800/60 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1" id="subterritory-buttons-container">
+                <!-- Dynamically generated -->
+            </div>
+        </div>
+
+        <!-- TAB 1: CROP PROTECTION & MARKET VALUE -->
+        <div id="tab-content-crop" class="space-y-6">
+
+            <!-- METRIC CARDS OVERVIEW -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card rounded-2xl p-4 glass-card-hover relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-10 text-emerald-400">
+                        <i data-lucide="map" class="w-24 h-24"></i>
+                    </div>
+                    <span class="text-xs font-medium text-slate-400">Total Luas Panen</span>
+                    <div class="text-2xl font-bold text-white font-mono-num mt-1" id="stat-total-ha">2.321.000 <span class="text-xs font-normal text-slate-400">Ha</span></div>
+                    <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        <span>5 Komoditas Utama CJ</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 glass-card-hover relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-10 text-blue-400">
+                        <i data-lucide="coins" class="w-24 h-24"></i>
+                    </div>
+                    <span class="text-xs font-medium text-slate-400">Total Market Value (CP)</span>
+                    <div class="text-2xl font-bold text-emerald-400 font-mono-num mt-1" id="stat-total-mv">Rp 2,67 <span class="text-sm">Triliun</span></div>
+                    <div class="mt-2 text-xs text-slate-400 flex items-center gap-1">
+                        <span>Realized: <strong class="text-slate-200" id="stat-realized-mv">Rp 2.20 T</strong></span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 glass-card-hover relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-10 text-amber-400">
+                        <i data-lucide="shield-alert" class="w-24 h-24"></i>
+                    </div>
+                    <span class="text-xs font-medium text-slate-400">Dominasi Insektisida</span>
+                    <div class="text-2xl font-bold text-amber-400 font-mono-num mt-1" id="stat-total-insec">Rp 1,12 <span class="text-sm">Triliun</span></div>
+                    <div class="mt-2 text-xs text-amber-400/80 flex items-center gap-1">
+                        <span>Porsi Terbesar Padi & Horti</span>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 glass-card-hover relative overflow-hidden">
+                    <div class="absolute -right-2 -bottom-2 opacity-10 text-indigo-400">
+                        <i data-lucide="pie-chart" class="w-24 h-24"></i>
+                    </div>
+                    <span class="text-xs font-medium text-slate-400">Fungisida & Herbisida</span>
+                    <div class="text-lg font-bold text-indigo-300 font-mono-num mt-1" id="stat-total-fung-herb">Rp 927 M / Rp 631 M</div>
+                    <div class="mt-2 text-xs text-slate-400 flex items-center gap-1">
+                        <span>Fungisida (Horti) / Herbi (Jagung)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5 CROP CARDS GRID -->
+            <div>
+                <h3 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                    <i data-lucide="leaf" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Breakdown Market Value 5 Komoditas Utama</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="crop-cards-container">
+                    <!-- Dynamically generated -->
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- CHART 1: Market Share per Crop -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i>
+                            <span>Market Value CP per Komoditas (IDR Miliar)</span>
+                        </h4>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="cropMarketChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- CHART 2: Pestisida Breakdown -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Distribusi Total Pestisida Jawa Tengah</span>
+                        </h4>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
+                        <canvas id="pesticideSplitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: ANALISIS BELUK & PRODUCT SHARE -->
+        <div id="tab-content-beluk" class="space-y-6 hidden">
+
+            <!-- BELUK OVERVIEW STATS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-red-500">
+                    <span class="text-xs text-slate-400 font-medium">Kabupaten Risiko Tinggi Beluk</span>
+                    <div class="text-xl font-bold text-red-400 mt-1">Demak, Grobogan, Sragen, Cilacap</div>
+                    <p class="text-xs text-slate-400 mt-1">Serangan > 15% | Keparahan > 25% (IP200/IP300 masif)</p>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-amber-500">
+                    <span class="text-xs text-slate-400 font-medium">Puncak Serangan Bulanan</span>
+                    <div class="text-xl font-bold text-amber-400 mt-1">Feb (28.5%) & Jun (32.0%)</div>
+                    <p class="text-xs text-slate-400 mt-1">Akumulasi populasi ngengat pada puncak generatif MT1 & MT2</p>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
+                    <span class="text-xs text-slate-400 font-medium">Insektisida Penyelamat (Gol. 30)</span>
+                    <div class="text-xl font-bold text-emerald-400 mt-1">Incipio, Brofreya, Simodis</div>
+                    <p class="text-xs text-slate-400 mt-1">Pertumbuhan adopsi pesat pada daerah endemik beluk/ulat</p>
+                </div>
+            </div>
+
+            <!-- SEASONALITY CHART -->
+            <div class="glass-card rounded-2xl p-5 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-red-400"></i>
+                        <span>Tren Fluktuasi Bulanan Keparahan Serangan Beluk (%)</span>
+                    </h4>
+                    <span class="text-xs text-slate-400">Januari - Desember (Pola Siklus MT1, MT2, MT3)</span>
+                </div>
+                <div class="h-64 relative">
+                    <canvas id="belukMonthlyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- DISTRICT TABLE -->
+            <div class="glass-card rounded-2xl p-5 space-y-4 overflow-hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i data-lucide="table" class="w-4 h-4 text-blue-400"></i>
+                            <span>Tabel Analisis Beluk & Top 5 Insektisida Market Leader per District</span>
+                        </h4>
+                        <p class="text-xs text-slate-400 mt-0.5">Menampilkan data Luas Padi, Tingkat Risiko, Keparahan, dan Top Produk (Golongan 30 & Non-30)</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="table-search-input" onkeyup="filterBelukTable()" placeholder="Cari kabupaten / district / produk..." class="bg-slate-900/90 border border-slate-700 text-xs text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 w-64">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-xs text-slate-300 border-collapse">
+                        <thead class="bg-slate-900/90 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="py-3 px-3">Territory</th>
+                                <th class="py-3 px-3">Sub-Territory / Kab</th>
+                                <th class="py-3 px-3">District Sentra</th>
+                                <th class="py-3 px-3 text-right">Luas Padi</th>
+                                <th class="py-3 px-3 text-right">% Serangan</th>
+                                <th class="py-3 px-3 text-right">% Keparahan</th>
+                                <th class="py-3 px-3 text-center">Risiko</th>
+                                <th class="py-3 px-3">Top 5 Insektisida Market Leader</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60" id="beluk-table-body">
+                            <!-- Dynamically generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- DATA SCRIPT & LOGIC -->
+    <script>
+        // DATASET CROP PROTECTION & TERRITORY
+        const datasetTerritory = [
+            {
+                name: "Semua JT",
+                label: "Semua Jawa Tengah & DIY",
+                subTerritories: ["Semua Kab/Kota"],
+                crops: {
+                    padi: { ha: 1650000, cost: 900000, totalMv: 1485000000000, insec: 594000000000, fung: 445500000000, herb: 445500000000 },
+                    jagung: { ha: 550000, cost: 500000, totalMv: 275000000000, insec: 110000000000, fung: 24750000000, herb: 140250000000 },
+                    bawang: { ha: 58000, cost: 8000000, totalMv: 464000000000, insec: 208800000000, fung: 232000000000, herb: 23200000000 },
+                    cabai: { ha: 45000, cost: 6000000, totalMv: 270000000000, insec: 148500000000, fung: 108000000000, herb: 13500000000 },
+                    kentang: { ha: 18000, cost: 10000000, totalMv: 180000000000, insec: 54000000000, fung: 117000000000, herb: 9000000000 }
+                }
+            },
+            {
+                name: "Brebes",
+                label: "Brebes (Pantura & Horti)",
+                subTerritories: ["Semua Sub Brebes", "Kab. Brebes", "Kab. Tegal", "Kota Tegal", "Purbalingga Atas"],
+                subData: {
+                    "Kab. Brebes": { padi: 68000, jagung: 12000, bawang: 32000, cabai: 4500, kentang: 500 },
+                    "Kab. Tegal": { padi: 38000, jagung: 11000, bawang: 8500, cabai: 2200, kentang: 800 },
+                    "Kota Tegal": { padi: 1200, jagung: 300, bawang: 200, cabai: 100, kentang: 0 },
+                    "Purbalingga Atas": { padi: 14000, jagung: 5000, bawang: 1200, cabai: 1800, kentang: 1200 }
+                }
+            },
+            {
+                name: "Pekalongan",
+                label: "Pekalongan Raya",
+                subTerritories: ["Semua Sub Pekalongan", "Pemalang", "Pekalongan", "Batang", "Kendal"],
+                subData: {
+                    "Pemalang": { padi: 72000, jagung: 31000, bawang: 800, cabai: 3200, kentang: 400 },
+                    "Pekalongan": { padi: 38000, jagung: 14000, bawang: 200, cabai: 1500, kentang: 600 },
+                    "Batang": { padi: 39000, jagung: 18000, bawang: 1500, cabai: 1200, kentang: 1100 },
+                    "Kendal": { padi: 46000, jagung: 22000, bawang: 1800, cabai: 2100, kentang: 200 }
+                }
+            },
+            {
+                name: "Semarang",
+                label: "Semarang & Kedungsepur",
+                subTerritories: ["Semua Sub Semarang", "Grobogan", "Kudus", "Demak", "Salatiga", "Semarang"],
+                subData: {
+                    "Grobogan": { padi: 138000, jagung: 122000, bawang: 2200, cabai: 2800, kentang: 0 },
+                    "Kudus": { padi: 28000, jagung: 6000, bawang: 100, cabai: 400, kentang: 0 },
+                    "Demak": { padi: 112000, jagung: 24000, bawang: 4800, cabai: 1200, kentang: 0 },
+                    "Salatiga": { padi: 4000, jagung: 1800, bawang: 50, cabai: 300, kentang: 0 },
+                    "Semarang": { padi: 32000, jagung: 12000, bawang: 400, cabai: 1900, kentang: 300 }
+                }
+            },
+            {
+                name: "Solo",
+                label: "Solo Raya",
+                subTerritories: ["Semua Sub Solo", "Sragen", "Karanganyar", "Sukoharjo", "Klaten", "Boyolali", "Wonogiri"],
+                subData: {
+                    "Sragen": { padi: 115000, jagung: 28000, bawang: 400, cabai: 2200, kentang: 0 },
+                    "Karanganyar": { padi: 48000, jagung: 14000, bawang: 200, cabai: 1800, kentang: 100 },
+                    "Sukoharjo": { padi: 52000, jagung: 8000, bawang: 100, cabai: 1200, kentang: 0 },
+                    "Klaten": { padi: 68000, jagung: 12000, bawang: 300, cabai: 1900, kentang: 0 },
+                    "Boyolali": { padi: 49000, jagung: 26000, bawang: 600, cabai: 4200, kentang: 800 },
+                    "Wonogiri": { padi: 62000, jagung: 54000, bawang: 200, cabai: 2800, kentang: 0 }
+                }
+            },
+            {
+                name: "Kebumen",
+                label: "Kebumen & DIY / Selatan",
+                subTerritories: ["Semua Sub Kebumen", "Gunung Kidul", "Sleman", "Bantul", "Kulonprogo", "Jogja", "Purworejo", "Kebumen", "Cilacap", "Banyumas"],
+                subData: {
+                    "Gunung Kidul": { padi: 48000, jagung: 42000, bawang: 400, cabai: 1800, kentang: 0 },
+                    "Sleman": { padi: 38000, jagung: 6000, bawang: 200, cabai: 1600, kentang: 0 },
+                    "Bantul": { padi: 28000, jagung: 4000, bawang: 1200, cabai: 2400, kentang: 0 },
+                    "Kulonprogo": { padi: 22000, jagung: 5000, bawang: 600, cabai: 2100, kentang: 0 },
+                    "Jogja": { padi: 1000, jagung: 100, bawang: 0, cabai: 50, kentang: 0 },
+                    "Purworejo": { padi: 54000, jagung: 11000, bawang: 300, cabai: 1500, kentang: 0 },
+                    "Kebumen": { padi: 78000, jagung: 16000, bawang: 500, cabai: 2200, kentang: 0 },
+                    "Cilacap": { padi: 124000, jagung: 18000, bawang: 300, cabai: 1400, kentang: 0 },
+                    "Banyumas": { padi: 64000, jagung: 12000, bawang: 200, cabai: 1100, kentang: 0 }
+                }
+            },
+            {
+                name: "Wonosobo",
+                label: "Wonosobo (Dieng High)",
+                subTerritories: ["Semua Sub Wonosobo", "Magelang", "Temanggung", "Wonosobo", "Banjarnegara"],
+                subData: {
+                    "Magelang": { padi: 42000, jagung: 21000, bawang: 1200, cabai: 6800, kentang: 1800 },
+                    "Temanggung": { padi: 26000, jagung: 18000, bawang: 2800, cabai: 5400, kentang: 2200 },
+                    "Wonosobo": { padi: 22000, jagung: 14000, bawang: 1800, cabai: 3800, kentang: 4800 },
+                    "Banjarnegara": { padi: 34000, jagung: 16000, bawang: 1100, cabai: 2900, kentang: 3400 }
+                }
+            }
+        ];
+
+        // BELUK DATASET PER DISTRICT
+        const datasetBeluk = [
+            { territory: "Brebes", subTerritory: "Brebes", district: "Wanasari, Larangan, Jatibarang", area: 68000, attack: "14.5%", severity: "24.0%", risk: "Sedang", top5: "1. Brofreya 53SC (28%)\n2. Virtako 300SC (25%)\n3. Prevathon 50SC (18%)\n4. Simodis 100DC (12%)\n5. Incipio 200SC (10%)" },
+            { territory: "Brebes", subTerritory: "Tegal", district: "Adiwerna, Kramat, Suradadi", area: 38000, attack: "11.0%", severity: "17.5%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Brofreya 53SC (20%)\n3. Incipio 200SC (18%)\n4. Prevathon 50SC (16%)\n5. Simodis 100DC (10%)" },
+            { territory: "Brebes", subTerritory: "Purbalingga Atas", district: "Kemangkon, Kejobong, Bukateja", area: 14000, attack: "5.0%", severity: "7.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Spontan 400SL (18%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
+            { territory: "Pekalongan", subTerritory: "Pemalang", district: "Petarukan, Ampelgading, Comal", area: 72000, attack: "13.0%", severity: "21.0%", risk: "Sedang", top5: "1. Virtako 300SC (28%)\n2. Incipio 200SC (24%)\n3. Brofreya 53SC (18%)\n4. Prevathon 50SC (16%)\n5. Vayego 200SC (10%)" },
+            { territory: "Pekalongan", subTerritory: "Pekalongan", district: "Sragi, Tirto, Buaran", area: 38000, attack: "10.0%", severity: "15.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (22%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (10%)" },
+            { territory: "Pekalongan", subTerritory: "Batang", district: "Tulis, Kandeman, Bawang", area: 39000, attack: "9.0%", severity: "14.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Regent 50SC (14%)\n5. Brofreya 53SC (12%)" },
+            { territory: "Pekalongan", subTerritory: "Kendal", district: "Cepiring, Kangkung, Rowosari", area: 46000, attack: "12.0%", severity: "19.5%", risk: "Sedang", top5: "1. Virtako 300SC (28%)\n2. Incipio 200SC (25%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (15%)\n5. Prevathon 50SC (12%)" },
+            { territory: "Semarang", subTerritory: "Semarang", district: "Ambarawa, Bringin, Tengaran", area: 32000, attack: "7.0%", severity: "10.5%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Incipio 200SC (16%)\n4. Spontan 400SL (15%)\n5. Brofreya 53SC (10%)" },
+            { territory: "Semarang", subTerritory: "Salatiga", district: "Sidorejo, Argomulyo", area: 4000, attack: "4.0%", severity: "5.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (18%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
+            { territory: "Semarang", subTerritory: "Demak", district: "Dempet, Gajah, Karanganyar", area: 112000, attack: "19.0%", severity: "35.0%", risk: "Tinggi", top5: "1. Incipio 200SC (32%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (12%)\n5. Prevathon 50SC (10%)" },
+            { territory: "Semarang", subTerritory: "Kudus", district: "Undaan, Mejobo, Jati", area: 28000, attack: "12.5%", severity: "20.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (18%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (12%)" },
+            { territory: "Semarang", subTerritory: "Grobogan", district: "Godong, Purwodadi, Gabus", area: 138000, attack: "18.5%", severity: "32.0%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (26%)\n3. Brofreya 53SC (20%)\n4. Prevathon 50SC (14%)\n5. Vayego 200SC (10%)" },
+            { territory: "Solo", subTerritory: "Sragen", district: "Masaran, Sidoharjo, Tanon", area: 115000, attack: "16.5%", severity: "27.0%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Prevathon 50SC (14%)\n5. Vayego 200SC (10%)" },
+            { territory: "Solo", subTerritory: "Karanganyar", district: "Mojogedang, Kebakkramat", area: 48000, attack: "8.0%", severity: "12.0%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Brofreya 53SC (14%)\n5. Regent 50SC (12%)" },
+            { territory: "Solo", subTerritory: "Sukoharjo", district: "Polokarto, Mojolaban, Bendosari", area: 52000, attack: "11.5%", severity: "18.5%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (18%)\n4. Brofreya 53SC (15%)\n5. Vayego 200SC (12%)" },
+            { territory: "Solo", subTerritory: "Klaten", district: "Delanggu, Ceper, Polanharjo", area: 68000, attack: "11.0%", severity: "18.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (10%)" },
+            { territory: "Solo", subTerritory: "Boyolali", district: "Banyudono, Sawit, Ngemplak", area: 49000, attack: "7.5%", severity: "11.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (16%)\n4. Regent 50SC (14%)\n5. Brofreya 53SC (12%)" },
+            { territory: "Solo", subTerritory: "Wonogiri", district: "Selogiri, Wonogiri", area: 62000, attack: "8.5%", severity: "13.0%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Spontan 400SL (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (12%)" },
+            { territory: "Kebumen", subTerritory: "Gunung Kidul", district: "Wonosari, Semin, Ponjong", area: 48000, attack: "5.0%", severity: "7.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Spontan 400SL (18%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" },
+            { territory: "Kebumen", subTerritory: "Sleman", district: "Kalasan, Berbah, Prambanan", area: 38000, attack: "6.5%", severity: "9.5%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (14%)\n5. Brofreya 53SC (10%)" },
+            { territory: "Kebumen", subTerritory: "Bantul", district: "Imogiri, Jetis, Bambanglipuro", area: 28000, attack: "7.5%", severity: "11.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (22%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (10%)" },
+            { territory: "Kebumen", subTerritory: "Kulonprogo", district: "Wates, Panjatan, Temon", area: 22000, attack: "7.0%", severity: "10.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (10%)" },
+            { territory: "Kebumen", subTerritory: "Purworejo", district: "Pituruh, Grabag, Purwodadi", area: 54000, attack: "9.5%", severity: "14.5%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Belt Expert (14%)\n5. Brofreya 53SC (12%)" },
+            { territory: "Kebumen", subTerritory: "Kebumen", district: "Kutowinangun, Ambal, Mirit", area: 78000, attack: "12.5%", severity: "19.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Vayego 200SC (10%)" },
+            { territory: "Kebumen", subTerritory: "Cilacap", district: "Kroya, Maos, Kesugihan", area: 124000, attack: "17.0%", severity: "28.5%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (12%)\n5. Prevathon 50SC (10%)" },
+            { territory: "Kebumen", subTerritory: "Banyumas", district: "Rawalo, Jatilawang, Sumbang", area: 64000, attack: "10.0%", severity: "15.5%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Spontan 400SL (14%)\n5. Brofreya 53SC (12%)" },
+            { territory: "Wonosobo", subTerritory: "Banjarnegara", district: "Purwanegara, Mandiraja", area: 34000, attack: "5.5%", severity: "8.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
+            { territory: "Wonosobo", subTerritory: "Wonosobo", district: "Kertek, Selomerto, Leksono", area: 22000, attack: "4.0%", severity: "5.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (18%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" },
+            { territory: "Wonosobo", subTerritory: "Magelang", district: "Muntilan, Mungkid, Salam", area: 42000, attack: "6.0%", severity: "9.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (15%)\n4. Incipio 200SC (14%)\n5. Brofreya 53SC (10%)" },
+            { territory: "Wonosobo", subTerritory: "Temanggung", district: "Parakan, Bulu, Temanggung", area: 26000, attack: "4.5%", severity: "6.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (18%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" }
+        ];
+
+        // STATE
+        let activeTerritory = "Semua JT";
+        let activeSubTerritory = "Semua Kab/Kota";
+        let cropMarketChart, pesticideSplitChart, belukMonthlyChart;
+
+        // INITIALIZATION
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            renderTerritoryButtons();
+            renderSubTerritoryButtons();
+            updateDashboardData();
+            initBelukTable();
+            initCharts();
+        });
+
+        // TAB SWITCHING
+        function switchMainTab(tab) {
+            const btnCrop = document.getElementById('btn-tab-crop');
+            const btnBeluk = document.getElementById('btn-tab-beluk');
+            const tabCrop = document.getElementById('tab-content-crop');
+            const tabBeluk = document.getElementById('tab-content-beluk');
+
+            if (tab === 'crop') {
+                btnCrop.className = "px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-500/20 flex items-center gap-1.5";
+                btnBeluk.className = "px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center gap-1.5";
+                tabCrop.classList.remove('hidden');
+                tabBeluk.classList.add('hidden');
+            } else {
+                btnBeluk.className = "px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-blue-600 text-white shadow-lg shadow-blue-500/20 flex items-center gap-1.5";
+                btnCrop.className = "px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center gap-1.5";
+                tabBeluk.classList.remove('hidden');
+                tabCrop.classList.add('hidden');
+            }
+        }
+
+        // RENDER FILTER BUTTONS
+        function renderTerritoryButtons() {
+            const container = document.getElementById('territory-buttons-container');
+            container.innerHTML = datasetTerritory.map(t => {
+                const isActive = t.name === activeTerritory;
+                const activeClass = isActive ? "bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20" : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white";
+                return `<button onclick="selectTerritory('${t.name}')" class="px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all ${activeClass}">${t.name}</button>`;
+            }).join('');
+        }
+
+        function renderSubTerritoryButtons() {
+            const container = document.getElementById('subterritory-buttons-container');
+            const tObj = datasetTerritory.find(t => t.name === activeTerritory);
+            
+            if (!tObj || !tObj.subTerritories) {
+                container.innerHTML = `<span class="text-xs text-slate-500">Pilih Territory untuk melihat Sub-Territory</span>`;
+                return;
+            }
+
+            container.innerHTML = tObj.subTerritories.map(sub => {
+                const isActive = sub === activeSubTerritory;
+                const activeClass = isActive ? "bg-blue-500 text-white font-semibold" : "bg-slate-900/80 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800";
+                return `<button onclick="selectSubTerritory('${sub}')" class="px-2.5 py-1 rounded-lg text-[11px] whitespace-nowrap transition-all ${activeClass}">${sub}</button>`;
+            }).join('');
+        }
+
+        function selectTerritory(tName) {
+            activeTerritory = tName;
+            const tObj = datasetTerritory.find(t => t.name === activeTerritory);
+            activeSubTerritory = tObj.subTerritories[0];
+            
+            renderTerritoryButtons();
+            renderSubTerritoryButtons();
+            updateDashboardData();
+            filterBelukTable();
+        }
+
+        function selectSubTerritory(subName) {
+            activeSubTerritory = subName;
+            renderSubTerritoryButtons();
+            updateDashboardData();
+            filterBelukTable();
+        }
+
+        // CALCULATE AND UPDATE DATA
+        function updateDashboardData() {
+            document.getElementById('active-territory-text').innerText = `${activeTerritory} (${activeSubTerritory})`;
+
+            let cropCalculated = {
+                padi: { ha: 0, totalMv: 0, insec: 0, fung: 0, herb: 0 },
+                jagung: { ha: 0, totalMv: 0, insec: 0, fung: 0, herb: 0 },
+                bawang: { ha: 0, totalMv: 0, insec: 0, fung: 0, herb: 0 },
+                cabai: { ha: 0, totalMv: 0, insec: 0, fung: 0, herb: 0 },
+                kentang: { ha: 0, totalMv: 0, insec: 0, fung: 0, herb: 0 }
+            };
+
+            const params = {
+                padi: { cost: 900000, insecPct: 0.40, fungPct: 0.30, herbPct: 0.30 },
+                jagung: { cost: 500000, insecPct: 0.40, fungPct: 0.09, herbPct: 0.51 },
+                bawang: { cost: 8000000, insecPct: 0.45, fungPct: 0.50, herbPct: 0.05 },
+                cabai: { cost: 6000000, insecPct: 0.55, fungPct: 0.40, herbPct: 0.05 },
+                kentang: { cost: 10000000, insecPct: 0.30, fungPct: 0.65, herbPct: 0.05 }
+            };
+
+            if (activeTerritory === "Semua JT") {
+                cropCalculated = datasetTerritory[0].crops;
+            } else {
+                const tObj = datasetTerritory.find(t => t.name === activeTerritory);
+                let targetSubs = [];
+
+                if (activeSubTerritory.startsWith("Semua Sub")) {
+                    targetSubs = Object.keys(tObj.subData);
+                } else {
+                    targetSubs = [activeSubTerritory];
+                }
+
+                targetSubs.forEach(sub => {
+                    const data = tObj.subData[sub];
+                    if (data) {
+                        for (let key in params) {
+                            const ha = data[key] || 0;
+                            const mv = ha * params[key].cost;
+                            cropCalculated[key].ha += ha;
+                            cropCalculated[key].totalMv += mv;
+                            cropCalculated[key].insec += mv * params[key].insecPct;
+                            cropCalculated[key].fung += mv * params[key].fungPct;
+                            cropCalculated[key].herb += mv * params[key].herbPct;
+                        }
+                    }
+                });
+            }
+
+            // TOTAL METRICS
+            let totalHa = 0, totalMv = 0, totalInsec = 0, totalFung = 0, totalHerb = 0;
+            for (let c in cropCalculated) {
+                totalHa += cropCalculated[c].ha;
+                totalMv += cropCalculated[c].totalMv;
+                totalInsec += cropCalculated[c].insec;
+                totalFung += cropCalculated[c].fung;
+                totalHerb += cropCalculated[c].herb;
+            }
+
+            document.getElementById('stat-total-ha').innerHTML = `${totalHa.toLocaleString('id-ID')} <span class="text-xs font-normal text-slate-400">Ha</span>`;
+            document.getElementById('stat-total-mv').innerHTML = formatCurrencyShort(totalMv);
+            document.getElementById('stat-realized-mv').innerText = formatCurrencyShort(totalMv * 0.821);
+            document.getElementById('stat-total-insec').innerHTML = formatCurrencyShort(totalInsec);
+            document.getElementById('stat-total-fung-herb').innerText = `${formatCurrencyShort(totalFung)} / ${formatCurrencyShort(totalHerb)}`;
+
+            renderCropCards(cropCalculated);
+            updateCharts(cropCalculated, totalInsec, totalFung, totalHerb);
+        }
+
+        function formatCurrencyShort(val) {
+            if (val >= 1000000000000) {
+                return `Rp ${(val / 1000000000000).toFixed(2)} Triliun`;
+            } else if (val >= 1000000000) {
+                return `Rp ${(val / 1000000000).toFixed(1)} Miliar`;
+            } else if (val >= 1000000) {
+                return `Rp ${(val / 1000000).toFixed(0)} Juta`;
+            }
+            return `Rp ${val.toLocaleString('id-ID')}`;
+        }
+
+        // CROP CARDS
+        function renderCropCards(crops) {
+            const container = document.getElementById('crop-cards-container');
+            const cropMeta = [
+                { key: 'padi', name: 'Padi', icon: '🌾', color: 'emerald' },
+                { key: 'jagung', name: 'Jagung', icon: '🌽', color: 'amber' },
+                { key: 'bawang', name: 'Bawang Merah', icon: '🧅', color: 'rose' },
+                { key: 'cabai', name: 'Cabai', icon: '🌶️', color: 'red' },
+                { key: 'kentang', name: 'Kentang', icon: '🥔', color: 'yellow' }
+            ];
+
+            container.innerHTML = cropMeta.map(m => {
+                const c = crops[m.key];
+                return `
+                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 glass-card-hover">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-lg">${m.icon}</span>
+                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${m.name}</span>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-xs text-slate-400">Luas Panen</div>
+                                <div class="text-lg font-bold text-white font-mono-num">${c.ha.toLocaleString('id-ID')} <span class="text-xs text-slate-400 font-normal">Ha</span></div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-xs text-slate-400">Market Value (CP)</div>
+                                <div class="text-sm font-bold text-emerald-400 font-mono-num">${formatCurrencyShort(c.totalMv)}</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 text-[11px]">
+                            <div class="flex justify-between text-amber-300">
+                                <span>Insektisida</span>
+                                <span class="font-mono-num">${formatCurrencyShort(c.insec)}</span>
+                            </div>
+                            <div class="flex justify-between text-emerald-300">
+                                <span>Fungisida</span>
+                                <span class="font-mono-num">${formatCurrencyShort(c.fung)}</span>
+                            </div>
+                            <div class="flex justify-between text-indigo-300">
+                                <span>Herbisida</span>
+                                <span class="font-mono-num">${formatCurrencyShort(c.herb)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // CHARTS INIT & UPDATE
+        function initCharts() {
+            // Chart 1: Bar Chart Crop
+            const ctx1 = document.getElementById('cropMarketChart').getContext('2d');
+            cropMarketChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Padi', 'Jagung', 'Bawang Merah', 'Cabai', 'Kentang'],
+                    datasets: [{
+                        label: 'Market Value (Rp Miliar)',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e', '#ef4444', '#eab308'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Chart 2: Doughnut Pesticide Split
+            const ctx2 = document.getElementById('pesticideSplitChart').getContext('2d');
+            pesticideSplitChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Insektisida', 'Fungisida', 'Herbisida'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#f59e0b', '#10b981', '#6366f1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: '#e2e8f0', font: { size: 11 } } }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // Chart 3: Beluk Seasonality
+            const ctx3 = document.getElementById('belukMonthlyChart').getContext('2d');
+            belukMonthlyChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb (MT1)', 'Mar', 'Apr', 'Mei', 'Jun (MT2)', 'Jul', 'Agu (MT3)', 'Sep', 'Okt', 'Nov', 'Des'],
+                    datasets: [{
+                        label: 'Est. Keparahan Serangan Beluk (%)',
+                        data: [12.0, 28.5, 15.0, 8.0, 18.5, 32.0, 16.0, 22.0, 14.0, 5.0, 6.5, 10.0],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            ticks: { color: '#94a3b8', callback: v => v + '%' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function updateCharts(crops, insec, fung, herb) {
+            if (!cropMarketChart) return;
+
+            cropMarketChart.data.datasets[0].data = [
+                crops.padi.totalMv / 1000000000,
+                crops.jagung.totalMv / 1000000000,
+                crops.bawang.totalMv / 1000000000,
+                crops.cabai.totalMv / 1000000000,
+                crops.kentang.totalMv / 1000000000
+            ];
+            cropMarketChart.update();
+
+            pesticideSplitChart.data.datasets[0].data = [
+                insec / 1000000000,
+                fung / 1000000000,
+                herb / 1000000000
+            ];
+            pesticideSplitChart.update();
+        }
+
+        // BELUK TABLE LOGIC
+        function initBelukTable() {
+            filterBelukTable();
+        }
+
+        function filterBelukTable() {
+            const tbody = document.getElementById('beluk-table-body');
+            const search = document.getElementById('table-search-input').value.toLowerCase();
+
+            let filtered = datasetBeluk.filter(item => {
+                const matchTerritory = (activeTerritory === "Semua JT") || (item.territory === activeTerritory);
+                const matchSub = (activeSubTerritory.startsWith("Semua Sub")) || (item.subTerritory === activeSubTerritory);
+                const matchSearch = item.territory.toLowerCase().includes(search) ||
+                                    item.subTerritory.toLowerCase().includes(search) ||
+                                    item.district.toLowerCase().includes(search) ||
+                                    item.top5.toLowerCase().includes(search);
+                return matchTerritory && matchSub && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Tidak ada data district yang sesuai filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(item => {
+                let riskBadge = '';
+                if (item.risk === 'Tinggi') riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">Tinggi</span>`;
+                else if (item.risk === 'Sedang') riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Sedang</span>`;
+                else riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Rendah</span>`;
+
+                const formattedTop5 = item.top5.replace(/\n/g, '<br>');
+
+                return `
+                    <tr class="hover:bg-slate-800/40 transition-colors">
+                        <td class="py-2.5 px-3 font-semibold text-slate-200">${item.territory}</td>
+                        <td class="py-2.5 px-3 text-slate-300">${item.subTerritory}</td>
+                        <td class="py-2.5 px-3 text-slate-400">${item.district}</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-200">${item.area.toLocaleString('id-ID')} Ha</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-300">${item.attack}</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num font-bold text-amber-400">${item.severity}</td>
+                        <td class="py-2.5 px-3 text-center">${riskBadge}</td>
+                        <td class="py-2.5 px-3 text-[11px] leading-relaxed text-slate-300">${formattedTop5}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
