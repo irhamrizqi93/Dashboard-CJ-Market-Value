@@ -67,7 +67,7 @@
                         Dashboard Pertanian & Market CJ
                         <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Jawa Tengah & DIY</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Analisis Luas Panen, Market Value Pestisida, Potensi Beluk, & Profil Insektisida Golongan 30</p>
+                    <p class="text-xs text-slate-400">Analisis Luas Panen, Market Value Pestisida, & Analisis Hama-Penyakit Multi-Komoditas</p>
                 </div>
             </div>
             
@@ -78,7 +78,7 @@
                 </button>
                 <button id="btn-tab-beluk" onclick="switchMainTab('beluk')" class="px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center gap-1.5">
                     <i data-lucide="bug" class="w-3.5 h-3.5"></i>
-                    <span>Analisis Beluk & Product Share</span>
+                    <span>Analisis Hama, Penyakit & Product Share</span>
                 </button>
             </div>
         </div>
@@ -202,39 +202,59 @@
 
         </div>
 
-        <!-- TAB 2: ANALISIS BELUK & PRODUCT SHARE -->
+        <!-- TAB 2: ANALISIS HAMA, PENYAKIT & PRODUCT SHARE -->
         <div id="tab-content-beluk" class="space-y-6 hidden">
 
-            <!-- BELUK OVERVIEW STATS -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="glass-card rounded-2xl p-4 border-l-4 border-red-500">
-                    <span class="text-xs text-slate-400 font-medium">Kabupaten Risiko Tinggi Beluk</span>
-                    <div class="text-xl font-bold text-red-400 mt-1">Demak, Grobogan, Sragen, Cilacap</div>
-                    <p class="text-xs text-slate-400 mt-1">Serangan > 15% | Keparahan > 25% (IP200/IP300 masif)</p>
+            <!-- KOMODITAS & HAMA/PENYAKIT SELECTOR -->
+            <div class="glass-card rounded-2xl p-4 space-y-3">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    <i data-lucide="bug" class="w-4 h-4 text-red-400"></i>
+                    <span>Pilih Komoditas & Jenis Hama/Penyakit</span>
                 </div>
-                <div class="glass-card rounded-2xl p-4 border-l-4 border-amber-500">
-                    <span class="text-xs text-slate-400 font-medium">Puncak Serangan Bulanan</span>
-                    <div class="text-xl font-bold text-amber-400 mt-1">Feb (28.5%) & Jun (32.0%)</div>
-                    <p class="text-xs text-slate-400 mt-1">Akumulasi populasi ngengat pada puncak generatif MT1 & MT2</p>
+                <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1" id="komoditas-buttons-container">
+                    <!-- Dynamically generated -->
                 </div>
-                <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
-                    <span class="text-xs text-slate-400 font-medium">Insektisida Penyelamat (Gol. 30)</span>
-                    <div class="text-xl font-bold text-emerald-400 mt-1">Incipio, Brofreya, Simodis</div>
-                    <p class="text-xs text-slate-400 mt-1">Pertumbuhan adopsi pesat pada daerah endemik beluk/ulat</p>
+                <div class="pt-2 border-t border-slate-800/60 flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1" id="hp-buttons-container">
+                    <!-- Dynamically generated -->
                 </div>
             </div>
 
-            <!-- SEASONALITY CHART -->
-            <div class="glass-card rounded-2xl p-5 space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-red-400"></i>
-                        <span>Tren Fluktuasi Bulanan Keparahan Serangan Beluk (%)</span>
-                    </h4>
-                    <span class="text-xs text-slate-400">Januari - Desember (Pola Siklus MT1, MT2, MT3)</span>
+            <!-- OVERVIEW STATS (dynamic per hama/penyakit) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="hp-overview-cards">
+                <!-- Dynamically generated -->
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- SEASONALITY CHART -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:items-start justify-between gap-2">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2" id="hp-chart-title">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-red-400"></i>
+                            <span>Tren Fluktuasi Bulanan Keparahan Serangan (%)</span>
+                        </h4>
+                        <span class="text-xs text-slate-400">Januari - Desember | Rata-rata tertimbang luas area district terpilih</span>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="hpMonthlyChart"></canvas>
+                    </div>
                 </div>
-                <div class="h-64 relative">
-                    <canvas id="belukMonthlyChart"></canvas>
+
+                <!-- PRODUCT SHARE CHART -->
+                <div class="glass-card rounded-2xl p-5 space-y-4">
+                    <div class="flex flex-col sm:items-start justify-between gap-2">
+                        <h4 class="text-sm font-bold text-white flex items-center gap-2" id="hp-product-chart-title">
+                            <i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-400"></i>
+                            <span>Product Share Rata-rata Tertimbang</span>
+                        </h4>
+                        <span class="text-xs text-slate-400" id="hp-product-chart-subtitle">Top 5 produk market leader pada wilayah terpilih</span>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="hpProductChart" class="hidden"></canvas>
+                        <div id="hp-product-chart-empty" class="hidden h-full flex flex-col items-center justify-center text-center gap-2 text-slate-500">
+                            <i data-lucide="database" class="w-8 h-8"></i>
+                            <span class="text-xs">Data belum tersedia</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -244,12 +264,12 @@
                     <div>
                         <h4 class="text-sm font-bold text-white flex items-center gap-2">
                             <i data-lucide="table" class="w-4 h-4 text-blue-400"></i>
-                            <span>Tabel Analisis Beluk & Top 5 Insektisida Market Leader per District</span>
+                            <span id="hp-table-title">Tabel Analisis & Top 5 Product Share per District</span>
                         </h4>
-                        <p class="text-xs text-slate-400 mt-0.5">Menampilkan data Luas Padi, Tingkat Risiko, Keparahan, dan Top Produk (Golongan 30 & Non-30)</p>
+                        <p class="text-xs text-slate-400 mt-0.5" id="hp-table-subtitle">Menampilkan data Luas, Tingkat Risiko, Keparahan, dan Top Produk</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <input type="text" id="table-search-input" onkeyup="filterBelukTable()" placeholder="Cari kabupaten / district / produk..." class="bg-slate-900/90 border border-slate-700 text-xs text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 w-64">
+                        <input type="text" id="table-search-input" onkeyup="filterHpTable()" placeholder="Cari kabupaten / district / produk..." class="bg-slate-900/90 border border-slate-700 text-xs text-white rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 w-64">
                     </div>
                 </div>
 
@@ -260,14 +280,14 @@
                                 <th class="py-3 px-3">Territory</th>
                                 <th class="py-3 px-3">Sub-Territory / Kab</th>
                                 <th class="py-3 px-3">District Sentra</th>
-                                <th class="py-3 px-3 text-right">Luas Padi</th>
+                                <th class="py-3 px-3 text-right" id="hp-table-col-area">Luas</th>
                                 <th class="py-3 px-3 text-right">% Serangan</th>
                                 <th class="py-3 px-3 text-right">% Keparahan</th>
                                 <th class="py-3 px-3 text-center">Risiko</th>
-                                <th class="py-3 px-3">Top 5 Insektisida Market Leader</th>
+                                <th class="py-3 px-3" id="hp-table-col-products">Top 5 Produk Market Leader</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60" id="beluk-table-body">
+                        <tbody class="divide-y divide-slate-800/60" id="hp-table-body">
                             <!-- Dynamically generated -->
                         </tbody>
                     </table>
@@ -367,47 +387,346 @@
                     "Wonosobo": { padi: 22000, jagung: 14000, bawang: 1800, cabai: 3800, kentang: 4800 },
                     "Banjarnegara": { padi: 34000, jagung: 16000, bawang: 1100, cabai: 2900, kentang: 3400 }
                 }
+            },
+            {
+                name: "Pati",
+                label: "Pati Raya (Pantura Timur)",
+                subTerritories: ["Semua Sub Pati", "Pati", "Rembang", "Jepara", "Blora"],
+                incompleteCrops: ["jagung", "cabai", "kentang"],
+                subData: {
+                    "Pati": { padi: 102551, jagung: 0, bawang: 3800, cabai: 0, kentang: 0 },
+                    "Rembang": { padi: 38217, jagung: 0, bawang: 700, cabai: 0, kentang: 0 },
+                    "Jepara": { padi: 45085, jagung: 0, bawang: 500, cabai: 0, kentang: 0 },
+                    "Blora": { padi: 84500, jagung: 0, bawang: 300, cabai: 0, kentang: 0 }
+                }
             }
         ];
 
-        // BELUK DATASET PER DISTRICT
-        const datasetBeluk = [
-            { territory: "Brebes", subTerritory: "Brebes", district: "Wanasari, Larangan, Jatibarang", area: 68000, attack: "14.5%", severity: "24.0%", risk: "Sedang", top5: "1. Brofreya 53SC (28%)\n2. Virtako 300SC (25%)\n3. Prevathon 50SC (18%)\n4. Simodis 100DC (12%)\n5. Incipio 200SC (10%)" },
-            { territory: "Brebes", subTerritory: "Tegal", district: "Adiwerna, Kramat, Suradadi", area: 38000, attack: "11.0%", severity: "17.5%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Brofreya 53SC (20%)\n3. Incipio 200SC (18%)\n4. Prevathon 50SC (16%)\n5. Simodis 100DC (10%)" },
-            { territory: "Brebes", subTerritory: "Purbalingga Atas", district: "Kemangkon, Kejobong, Bukateja", area: 14000, attack: "5.0%", severity: "7.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Spontan 400SL (18%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
-            { territory: "Pekalongan", subTerritory: "Pemalang", district: "Petarukan, Ampelgading, Comal", area: 72000, attack: "13.0%", severity: "21.0%", risk: "Sedang", top5: "1. Virtako 300SC (28%)\n2. Incipio 200SC (24%)\n3. Brofreya 53SC (18%)\n4. Prevathon 50SC (16%)\n5. Vayego 200SC (10%)" },
-            { territory: "Pekalongan", subTerritory: "Pekalongan", district: "Sragi, Tirto, Buaran", area: 38000, attack: "10.0%", severity: "15.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (22%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (10%)" },
-            { territory: "Pekalongan", subTerritory: "Batang", district: "Tulis, Kandeman, Bawang", area: 39000, attack: "9.0%", severity: "14.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Regent 50SC (14%)\n5. Brofreya 53SC (12%)" },
-            { territory: "Pekalongan", subTerritory: "Kendal", district: "Cepiring, Kangkung, Rowosari", area: 46000, attack: "12.0%", severity: "19.5%", risk: "Sedang", top5: "1. Virtako 300SC (28%)\n2. Incipio 200SC (25%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (15%)\n5. Prevathon 50SC (12%)" },
-            { territory: "Semarang", subTerritory: "Semarang", district: "Ambarawa, Bringin, Tengaran", area: 32000, attack: "7.0%", severity: "10.5%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Incipio 200SC (16%)\n4. Spontan 400SL (15%)\n5. Brofreya 53SC (10%)" },
-            { territory: "Semarang", subTerritory: "Salatiga", district: "Sidorejo, Argomulyo", area: 4000, attack: "4.0%", severity: "5.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (18%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
-            { territory: "Semarang", subTerritory: "Demak", district: "Dempet, Gajah, Karanganyar", area: 112000, attack: "19.0%", severity: "35.0%", risk: "Tinggi", top5: "1. Incipio 200SC (32%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (12%)\n5. Prevathon 50SC (10%)" },
-            { territory: "Semarang", subTerritory: "Kudus", district: "Undaan, Mejobo, Jati", area: 28000, attack: "12.5%", severity: "20.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (18%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (12%)" },
-            { territory: "Semarang", subTerritory: "Grobogan", district: "Godong, Purwodadi, Gabus", area: 138000, attack: "18.5%", severity: "32.0%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (26%)\n3. Brofreya 53SC (20%)\n4. Prevathon 50SC (14%)\n5. Vayego 200SC (10%)" },
-            { territory: "Solo", subTerritory: "Sragen", district: "Masaran, Sidoharjo, Tanon", area: 115000, attack: "16.5%", severity: "27.0%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Prevathon 50SC (14%)\n5. Vayego 200SC (10%)" },
-            { territory: "Solo", subTerritory: "Karanganyar", district: "Mojogedang, Kebakkramat", area: 48000, attack: "8.0%", severity: "12.0%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Brofreya 53SC (14%)\n5. Regent 50SC (12%)" },
-            { territory: "Solo", subTerritory: "Sukoharjo", district: "Polokarto, Mojolaban, Bendosari", area: 52000, attack: "11.5%", severity: "18.5%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (18%)\n4. Brofreya 53SC (15%)\n5. Vayego 200SC (12%)" },
-            { territory: "Solo", subTerritory: "Klaten", district: "Delanggu, Ceper, Polanharjo", area: 68000, attack: "11.0%", severity: "18.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Belt Expert (10%)" },
-            { territory: "Solo", subTerritory: "Boyolali", district: "Banyudono, Sawit, Ngemplak", area: 49000, attack: "7.5%", severity: "11.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (16%)\n4. Regent 50SC (14%)\n5. Brofreya 53SC (12%)" },
-            { territory: "Solo", subTerritory: "Wonogiri", district: "Selogiri, Wonogiri", area: 62000, attack: "8.5%", severity: "13.0%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Spontan 400SL (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (12%)" },
-            { territory: "Kebumen", subTerritory: "Gunung Kidul", district: "Wonosari, Semin, Ponjong", area: 48000, attack: "5.0%", severity: "7.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Spontan 400SL (18%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" },
-            { territory: "Kebumen", subTerritory: "Sleman", district: "Kalasan, Berbah, Prambanan", area: 38000, attack: "6.5%", severity: "9.5%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (22%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (14%)\n5. Brofreya 53SC (10%)" },
-            { territory: "Kebumen", subTerritory: "Bantul", district: "Imogiri, Jetis, Bambanglipuro", area: 28000, attack: "7.5%", severity: "11.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (22%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (10%)" },
-            { territory: "Kebumen", subTerritory: "Kulonprogo", district: "Wates, Panjatan, Temon", area: 22000, attack: "7.0%", severity: "10.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (15%)\n5. Brofreya 53SC (10%)" },
-            { territory: "Kebumen", subTerritory: "Purworejo", district: "Pituruh, Grabag, Purwodadi", area: 54000, attack: "9.5%", severity: "14.5%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Belt Expert (14%)\n5. Brofreya 53SC (12%)" },
-            { territory: "Kebumen", subTerritory: "Kebumen", district: "Kutowinangun, Ambal, Mirit", area: 78000, attack: "12.5%", severity: "19.0%", risk: "Sedang", top5: "1. Virtako 300SC (30%)\n2. Incipio 200SC (24%)\n3. Prevathon 50SC (20%)\n4. Brofreya 53SC (15%)\n5. Vayego 200SC (10%)" },
-            { territory: "Kebumen", subTerritory: "Cilacap", district: "Kroya, Maos, Kesugihan", area: 124000, attack: "17.0%", severity: "28.5%", risk: "Tinggi", top5: "1. Incipio 200SC (30%)\n2. Virtako 300SC (28%)\n3. Brofreya 53SC (18%)\n4. Vayego 200SC (12%)\n5. Prevathon 50SC (10%)" },
-            { territory: "Kebumen", subTerritory: "Banyumas", district: "Rawalo, Jatilawang, Sumbang", area: 64000, attack: "10.0%", severity: "15.5%", risk: "Sedang", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Incipio 200SC (18%)\n4. Spontan 400SL (14%)\n5. Brofreya 53SC (12%)" },
-            { territory: "Wonosobo", subTerritory: "Banjarnegara", district: "Purwanegara, Mandiraja", area: 34000, attack: "5.5%", severity: "8.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (16%)\n4. Incipio 200SC (12%)\n5. Brofreya 53SC (8%)" },
-            { territory: "Wonosobo", subTerritory: "Wonosobo", district: "Kertek, Selomerto, Leksono", area: 22000, attack: "4.0%", severity: "5.5%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (18%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" },
-            { territory: "Wonosobo", subTerritory: "Magelang", district: "Muntilan, Mungkid, Salam", area: 42000, attack: "6.0%", severity: "9.0%", risk: "Rendah", top5: "1. Virtako 300SC (32%)\n2. Prevathon 50SC (20%)\n3. Regent 50SC (15%)\n4. Incipio 200SC (14%)\n5. Brofreya 53SC (10%)" },
-            { territory: "Wonosobo", subTerritory: "Temanggung", district: "Parakan, Bulu, Temanggung", area: 26000, attack: "4.5%", severity: "6.0%", risk: "Rendah", top5: "1. Virtako 300SC (30%)\n2. Prevathon 50SC (18%)\n3. Spontan 400SL (15%)\n4. Incipio 200SC (10%)\n5. Brofreya 53SC (8%)" }
-        ];
+        // DATASET HAMA & PENYAKIT (Multi-Komoditas)
+        const datasetHamaPenyakit = {
+            padi: {
+                label: "Padi",
+                icon: "🌾",
+                hamaPenyakit: {
+                    beluk: {
+                        label: "Beluk (Penggerek Batang)",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Wanasari, Larangan, Jatibarang",area:68000,attackPct:0.145,severityPct:0.24,risk:"Sedang",monthly:[0.1,0.24,0.12,0.06,0.15,0.27,0.13,0.18,0.11,0.04,0.05,0.08],products:[{name:"Brofreya 53SC",pct:0.28},{name:"Virtako 300SC",pct:0.25},{name:"Prevathon 50SC",pct:0.18},{name:"Simodis 100DC",pct:0.12},{name:"Incipio 200SC",pct:0.1}]},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Adiwerna, Kramat, Suradadi",area:38000,attackPct:0.11,severityPct:0.175,risk:"Sedang",monthly:[0.07,0.18,0.09,0.04,0.11,0.2,0.1,0.13,0.08,0.03,0.04,0.06],products:[{name:"Virtako 300SC",pct:0.3},{name:"Brofreya 53SC",pct:0.2},{name:"Incipio 200SC",pct:0.18},{name:"Prevathon 50SC",pct:0.16},{name:"Simodis 100DC",pct:0.1}]},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Kemangkon, Kejobong, Bukateja",area:14000,attackPct:0.05,severityPct:0.07,risk:"Rendah",monthly:[0.03,0.07,0.04,0.02,0.05,0.08,0.04,0.05,0.03,0.01,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.22},{name:"Spontan 400SL",pct:0.18},{name:"Incipio 200SC",pct:0.12},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Petarukan, Ampelgading, Comal",area:72000,attackPct:0.13,severityPct:0.21,risk:"Sedang",monthly:[0.09,0.21,0.11,0.05,0.13,0.24,0.12,0.16,0.1,0.03,0.05,0.07],products:[{name:"Abamektin",pct:0.28},{name:"Incipio 200SC",pct:0.24},{name:"Brofreya 53SC",pct:0.18},{name:"Prevathon 50SC",pct:0.16},{name:"Vayego 200SC",pct:0.1}]},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Sragi, Tirto, Buaran",area:38000,attackPct:0.1,severityPct:0.15,risk:"Sedang",monthly:[0.06,0.15,0.08,0.04,0.09,0.17,0.08,0.11,0.07,0.02,0.03,0.05],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.22},{name:"Prevathon 50SC",pct:0.2},{name:"Brofreya 53SC",pct:0.15},{name:"Belt Expert",pct:0.1}]},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Tulis, Kandeman, Bawang",area:39000,attackPct:0.09,severityPct:0.14,risk:"Sedang",monthly:[0.06,0.14,0.07,0.03,0.09,0.16,0.08,0.1,0.06,0.02,0.03,0.05],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.2},{name:"Incipio 200SC",pct:0.18},{name:"Regent 50SC",pct:0.14},{name:"Brofreya 53SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Kendal",district:"Cepiring, Kangkung, Rowosari",area:46000,attackPct:0.12,severityPct:0.195,risk:"Sedang",monthly:[0.08,0.19,0.1,0.05,0.12,0.22,0.11,0.15,0.09,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.28},{name:"Incipio 200SC",pct:0.25},{name:"Brofreya 53SC",pct:0.18},{name:"Vayego 200SC",pct:0.15},{name:"Prevathon 50SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Ambarawa, Bringin, Tengaran",area:32000,attackPct:0.07,severityPct:0.105,risk:"Rendah",monthly:[0.04,0.1,0.05,0.03,0.07,0.12,0.06,0.08,0.05,0.02,0.02,0.04],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.22},{name:"Incipio 200SC",pct:0.16},{name:"Spontan 400SL",pct:0.15},{name:"Brofreya 53SC",pct:0.1}]},
+                            {territory:"Semarang",subTerritory:"Salatiga",district:"Sidorejo, Argomulyo",area:4000,attackPct:0.04,severityPct:0.05,risk:"Rendah",monthly:[0.02,0.05,0.03,0.01,0.03,0.06,0.03,0.04,0.02,0.01,0.01,0.02],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.2},{name:"Regent 50SC",pct:0.18},{name:"Incipio 200SC",pct:0.12},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Dempet, Gajah, Karanganyar",area:112000,attackPct:0.19,severityPct:0.35,risk:"Tinggi",monthly:[0.15,0.35,0.18,0.1,0.23,0.4,0.2,0.27,0.17,0.06,0.08,0.12],products:[{name:"Incipio 200SC",pct:0.32},{name:"Abamektin",pct:0.28},{name:"Brofreya 53SC",pct:0.18},{name:"Vayego 200SC",pct:0.12},{name:"Prevathon 50SC",pct:0.1}]},
+                            {territory:"Semarang",subTerritory:"Kudus",district:"Undaan, Mejobo, Jati",area:28000,attackPct:0.125,severityPct:0.2,risk:"Sedang",monthly:[0.08,0.2,0.1,0.05,0.13,0.23,0.11,0.15,0.09,0.03,0.04,0.07],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.24},{name:"Prevathon 50SC",pct:0.18},{name:"Brofreya 53SC",pct:0.15},{name:"Belt Expert",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Grobogan",district:"Godong, Purwodadi, Gabus",area:138000,attackPct:0.185,severityPct:0.32,risk:"Tinggi",monthly:[0.14,0.32,0.17,0.09,0.21,0.37,0.18,0.25,0.15,0.05,0.07,0.11],products:[{name:"Incipio 200SC",pct:0.3},{name:"Abamektin",pct:0.26},{name:"Brofreya 53SC",pct:0.2},{name:"Prevathon 50SC",pct:0.14},{name:"Vayego 200SC",pct:0.1}]},
+                            {territory:"Solo",subTerritory:"Sragen",district:"Masaran, Sidoharjo, Tanon",area:115000,attackPct:0.165,severityPct:0.27,risk:"Tinggi",monthly:[0.12,0.27,0.14,0.07,0.18,0.31,0.15,0.21,0.13,0.04,0.06,0.09],products:[{name:"Incipio 200SC",pct:0.3},{name:"Abamektin",pct:0.28},{name:"Brofreya 53SC",pct:0.18},{name:"Prevathon 50SC",pct:0.14},{name:"Vayego 200SC",pct:0.1}]},
+                            {territory:"Solo",subTerritory:"Karanganyar",district:"Mojogedang, Kebakkramat",area:48000,attackPct:0.08,severityPct:0.12,risk:"Sedang",monthly:[0.05,0.12,0.06,0.03,0.08,0.14,0.07,0.09,0.06,0.02,0.03,0.04],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Incipio 200SC",pct:0.18},{name:"Brofreya 53SC",pct:0.14},{name:"Regent 50SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Sukoharjo",district:"Polokarto, Mojolaban, Bendosari",area:52000,attackPct:0.115,severityPct:0.185,risk:"Sedang",monthly:[0.08,0.18,0.09,0.05,0.12,0.21,0.1,0.14,0.09,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.24},{name:"Prevathon 50SC",pct:0.18},{name:"Brofreya 53SC",pct:0.15},{name:"Vayego 200SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Klaten",district:"Delanggu, Ceper, Polanharjo",area:68000,attackPct:0.11,severityPct:0.18,risk:"Sedang",monthly:[0.08,0.18,0.09,0.04,0.11,0.21,0.1,0.14,0.08,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.24},{name:"Prevathon 50SC",pct:0.2},{name:"Brofreya 53SC",pct:0.15},{name:"Belt Expert",pct:0.1}]},
+                            {territory:"Solo",subTerritory:"Boyolali",district:"Banyudono, Sawit, Ngemplak",area:49000,attackPct:0.075,severityPct:0.11,risk:"Rendah",monthly:[0.05,0.11,0.06,0.03,0.07,0.13,0.06,0.08,0.05,0.02,0.02,0.04],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Incipio 200SC",pct:0.16},{name:"Regent 50SC",pct:0.14},{name:"Brofreya 53SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Wonogiri",district:"Selogiri, Wonogiri",area:62000,attackPct:0.085,severityPct:0.13,risk:"Sedang",monthly:[0.05,0.13,0.07,0.03,0.08,0.15,0.07,0.1,0.06,0.02,0.03,0.04],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Spontan 400SL",pct:0.16},{name:"Incipio 200SC",pct:0.15},{name:"Brofreya 53SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Gunung Kidul",district:"Wonosari, Semin, Ponjong",area:48000,attackPct:0.05,severityPct:0.075,risk:"Rendah",monthly:[0.03,0.07,0.04,0.02,0.05,0.09,0.04,0.06,0.03,0.01,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.2},{name:"Spontan 400SL",pct:0.18},{name:"Incipio 200SC",pct:0.1},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Kebumen",subTerritory:"Bantul",district:"Imogiri, Jetis, Bambanglipuro",area:28000,attackPct:0.075,severityPct:0.115,risk:"Rendah",monthly:[0.05,0.11,0.06,0.03,0.07,0.13,0.06,0.09,0.05,0.02,0.02,0.04],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.22},{name:"Regent 50SC",pct:0.16},{name:"Incipio 200SC",pct:0.15},{name:"Brofreya 53SC",pct:0.1}]},
+                            {territory:"Kebumen",subTerritory:"Sleman",district:"Kalasan, Berbah, Prambanan",area:38000,attackPct:0.065,severityPct:0.095,risk:"Rendah",monthly:[0.04,0.09,0.05,0.02,0.06,0.11,0.05,0.07,0.04,0.02,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.22},{name:"Spontan 400SL",pct:0.15},{name:"Incipio 200SC",pct:0.14},{name:"Brofreya 53SC",pct:0.1}]},
+                            {territory:"Kebumen",subTerritory:"Kulonprogo",district:"Wates, Panjatan, Temon",area:22000,attackPct:0.07,severityPct:0.1,risk:"Rendah",monthly:[0.04,0.1,0.05,0.03,0.06,0.12,0.06,0.08,0.05,0.02,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.2},{name:"Regent 50SC",pct:0.16},{name:"Incipio 200SC",pct:0.15},{name:"Brofreya 53SC",pct:0.1}]},
+                            {territory:"Kebumen",subTerritory:"Purworejo",district:"Pituruh, Grabag, Purwodadi",area:54000,attackPct:0.095,severityPct:0.145,risk:"Sedang",monthly:[0.06,0.14,0.07,0.04,0.09,0.17,0.08,0.11,0.07,0.02,0.03,0.05],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Incipio 200SC",pct:0.18},{name:"Belt Expert",pct:0.14},{name:"Brofreya 53SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Kebumen",district:"Kutowinangun, Ambal, Mirit",area:78000,attackPct:0.125,severityPct:0.19,risk:"Sedang",monthly:[0.08,0.19,0.1,0.05,0.12,0.22,0.11,0.15,0.09,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.24},{name:"Prevathon 50SC",pct:0.2},{name:"Brofreya 53SC",pct:0.15},{name:"Vayego 200SC",pct:0.1}]},
+                            {territory:"Kebumen",subTerritory:"Cilacap",district:"Kroya, Maos, Kesugihan",area:124000,attackPct:0.17,severityPct:0.285,risk:"Tinggi",monthly:[0.12,0.28,0.15,0.08,0.18,0.33,0.16,0.22,0.14,0.04,0.06,0.1],products:[{name:"Incipio 200SC",pct:0.3},{name:"Abamektin",pct:0.28},{name:"Brofreya 53SC",pct:0.18},{name:"Vayego 200SC",pct:0.12},{name:"Prevathon 50SC",pct:0.1}]},
+                            {territory:"Kebumen",subTerritory:"Banyumas",district:"Rawalo, Jatilawang, Sumbang",area:64000,attackPct:0.1,severityPct:0.155,risk:"Sedang",monthly:[0.07,0.15,0.08,0.04,0.1,0.18,0.09,0.12,0.07,0.02,0.03,0.05],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Incipio 200SC",pct:0.18},{name:"Spontan 400SL",pct:0.14},{name:"Brofreya 53SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Purwanegara, Mandiraja",area:34000,attackPct:0.055,severityPct:0.08,risk:"Rendah",monthly:[0.03,0.08,0.04,0.02,0.05,0.09,0.04,0.06,0.04,0.01,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.2},{name:"Regent 50SC",pct:0.16},{name:"Incipio 200SC",pct:0.12},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kertek, Selomerto, Leksono",area:22000,attackPct:0.04,severityPct:0.055,risk:"Rendah",monthly:[0.02,0.05,0.03,0.01,0.03,0.06,0.03,0.04,0.02,0.01,0.01,0.02],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.18},{name:"Spontan 400SL",pct:0.15},{name:"Incipio 200SC",pct:0.1},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Muntilan, Mungkid, Salam",area:42000,attackPct:0.06,severityPct:0.09,risk:"Rendah",monthly:[0.04,0.09,0.05,0.02,0.06,0.1,0.05,0.07,0.04,0.02,0.02,0.03],products:[{name:"Virtako 300SC",pct:0.32},{name:"Prevathon 50SC",pct:0.2},{name:"Regent 50SC",pct:0.15},{name:"Incipio 200SC",pct:0.14},{name:"Brofreya 53SC",pct:0.1}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Parakan, Bulu, Temanggung",area:26000,attackPct:0.045,severityPct:0.06,risk:"Rendah",monthly:[0.03,0.06,0.03,0.02,0.04,0.07,0.03,0.05,0.03,0.01,0.01,0.02],products:[{name:"Virtako 300SC",pct:0.3},{name:"Prevathon 50SC",pct:0.18},{name:"Spontan 400SL",pct:0.15},{name:"Incipio 200SC",pct:0.1},{name:"Brofreya 53SC",pct:0.08}]},
+                            {territory:"Pati",subTerritory:"Pati",district:"Sukolilo, Kayen, Pucakwangi",area:102551.3,attackPct:0.19,severityPct:0.35,risk:"Tinggi",monthly:[0.15,0.35,0.18,0.1,0.23,0.4,0.2,0.27,0.17,0.06,0.08,0.12],products:[{name:"Incipio 200SC",pct:0.32},{name:"Abamektin",pct:0.28},{name:"Brofreya 53SC",pct:0.18},{name:"Vayego 200SC",pct:0.12},{name:"Prevathon 50SC",pct:0.1}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Kaliori, Sumber, Sale",area:38216.7,attackPct:0.1,severityPct:0.15,risk:"Sedang",monthly:[0.06,0.15,0.08,0.04,0.09,0.17,0.08,0.11,0.07,0.02,0.03,0.05],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.22},{name:"Prevathon 50SC",pct:0.2},{name:"Brofreya 53SC",pct:0.15},{name:"Belt Expert",pct:0.1}]},
+                            {territory:"Pati",subTerritory:"Jepara",district:"Keling, Nalumsari, Bangsri",area:45085,attackPct:0.12,severityPct:0.195,risk:"Sedang",monthly:[0.08,0.19,0.1,0.05,0.12,0.22,0.11,0.15,0.09,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.28},{name:"Incipio 200SC",pct:0.25},{name:"Brofreya 53SC",pct:0.18},{name:"Vayego 200SC",pct:0.15},{name:"Prevathon 50SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Kunduran, Kedungtuban, Ngawen",area:84500,attackPct:0.125,severityPct:0.19,risk:"Sedang",monthly:[0.08,0.19,0.1,0.05,0.12,0.22,0.11,0.15,0.09,0.03,0.04,0.06],products:[{name:"Abamektin",pct:0.3},{name:"Incipio 200SC",pct:0.24},{name:"Prevathon 50SC",pct:0.2},{name:"Brofreya 53SC",pct:0.15},{name:"Vayego 200SC",pct:0.1}]},
+                        ]
+                    },
+                    blast: {
+                        label: "Blast (Pyricularia oryzae)",
+                        type: "patogen",
+                        productLabel: "Fungisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Wanasari, Larangan, Jatibarang",area:68000,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Adiwerna, Kramat, Suradadi",area:38000,attackPct:0.09,severityPct:0.144,risk:"Rendah",monthly:[0.126,0.14,0.113,0.072,0.05,0.036,0.032,0.032,0.041,0.063,0.095,0.117],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Kemangkon, Kejobong, Bukateja",area:14000,attackPct:0.17,severityPct:0.289,risk:"Tinggi",monthly:[0.213,0.238,0.204,0.17,0.145,0.128,0.119,0.128,0.145,0.17,0.196,0.221],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Petarukan, Ampelgading, Comal",area:72000,attackPct:0.1,severityPct:0.16,risk:"Sedang",monthly:[0.14,0.155,0.125,0.08,0.055,0.04,0.035,0.035,0.045,0.07,0.105,0.13],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Sragi, Tirto, Buaran",area:38000,attackPct:0.11,severityPct:0.182,risk:"Sedang",monthly:[0.143,0.16,0.132,0.099,0.077,0.061,0.055,0.061,0.072,0.094,0.116,0.138],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Tulis, Kandeman, Bawang",area:39000,attackPct:0.13,severityPct:0.215,risk:"Sedang",monthly:[0.169,0.189,0.156,0.117,0.091,0.072,0.065,0.072,0.085,0.111,0.137,0.163],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Kendal",district:"Cepiring, Kangkung, Rowosari",area:46000,attackPct:0.1,severityPct:0.16,risk:"Sedang",monthly:[0.14,0.155,0.125,0.08,0.055,0.04,0.035,0.035,0.045,0.07,0.105,0.13],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Ambarawa, Bringin, Tengaran",area:32000,attackPct:0.15,severityPct:0.248,risk:"Sedang",monthly:[0.195,0.218,0.18,0.135,0.105,0.083,0.075,0.083,0.098,0.128,0.158,0.188],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Salatiga",district:"Sidorejo, Argomulyo",area:4000,attackPct:0.14,severityPct:0.238,risk:"Sedang",monthly:[0.175,0.196,0.168,0.14,0.119,0.105,0.098,0.105,0.119,0.14,0.161,0.182],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Dempet, Gajah, Karanganyar",area:112000,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Kudus",district:"Undaan, Mejobo, Jati",area:28000,attackPct:0.09,severityPct:0.144,risk:"Rendah",monthly:[0.126,0.14,0.113,0.072,0.05,0.036,0.032,0.032,0.041,0.063,0.095,0.117],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Grobogan",district:"Godong, Purwodadi, Gabus",area:138000,attackPct:0.07,severityPct:0.112,risk:"Rendah",monthly:[0.098,0.109,0.088,0.056,0.039,0.028,0.025,0.025,0.032,0.049,0.074,0.091],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Sragen",district:"Masaran, Sidoharjo, Tanon",area:115000,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Karanganyar",district:"Mojogedang, Kebakkramat",area:48000,attackPct:0.14,severityPct:0.238,risk:"Sedang",monthly:[0.175,0.196,0.168,0.14,0.119,0.105,0.098,0.105,0.119,0.14,0.161,0.182],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Sukoharjo",district:"Polokarto, Mojolaban, Bendosari",area:52000,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Klaten",district:"Delanggu, Ceper, Polanharjo",area:68000,attackPct:0.1,severityPct:0.165,risk:"Sedang",monthly:[0.13,0.145,0.12,0.09,0.07,0.055,0.05,0.055,0.065,0.085,0.105,0.125],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Boyolali",district:"Banyudono, Sawit, Ngemplak",area:49000,attackPct:0.15,severityPct:0.255,risk:"Tinggi",monthly:[0.188,0.21,0.18,0.15,0.128,0.113,0.105,0.113,0.128,0.15,0.173,0.195],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Wonogiri",district:"Selogiri, Wonogiri",area:62000,attackPct:0.12,severityPct:0.198,risk:"Sedang",monthly:[0.156,0.174,0.144,0.108,0.084,0.066,0.06,0.066,0.078,0.102,0.126,0.15],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Gunung Kidul",district:"Wonosari, Semin, Ponjong",area:48000,attackPct:0.1,severityPct:0.165,risk:"Sedang",monthly:[0.13,0.145,0.12,0.09,0.07,0.055,0.05,0.055,0.065,0.085,0.105,0.125],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Bantul",district:"Imogiri, Jetis, Bambanglipuro",area:28000,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Sleman",district:"Kalasan, Berbah, Prambanan",area:38000,attackPct:0.15,severityPct:0.255,risk:"Tinggi",monthly:[0.188,0.21,0.18,0.15,0.128,0.113,0.105,0.113,0.128,0.15,0.173,0.195],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Kulonprogo",district:"Wates, Panjatan, Temon",area:22000,attackPct:0.09,severityPct:0.144,risk:"Rendah",monthly:[0.126,0.14,0.113,0.072,0.05,0.036,0.032,0.032,0.041,0.063,0.095,0.117],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Purworejo",district:"Pituruh, Grabag, Purwodadi",area:54000,attackPct:0.12,severityPct:0.198,risk:"Sedang",monthly:[0.156,0.174,0.144,0.108,0.084,0.066,0.06,0.066,0.078,0.102,0.126,0.15],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Kebumen",district:"Kutowinangun, Ambal, Mirit",area:78000,attackPct:0.13,severityPct:0.215,risk:"Sedang",monthly:[0.169,0.189,0.156,0.117,0.091,0.072,0.065,0.072,0.085,0.111,0.137,0.163],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Cilacap",district:"Kroya, Maos, Kesugihan",area:124000,attackPct:0.14,severityPct:0.231,risk:"Sedang",monthly:[0.182,0.203,0.168,0.126,0.098,0.077,0.07,0.077,0.091,0.119,0.147,0.175],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Banyumas",district:"Rawalo, Jatilawang, Sumbang",area:64000,attackPct:0.15,severityPct:0.248,risk:"Sedang",monthly:[0.195,0.218,0.18,0.135,0.105,0.083,0.075,0.083,0.098,0.128,0.158,0.188],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Purwanegara, Mandiraja",area:34000,attackPct:0.18,severityPct:0.306,risk:"Tinggi",monthly:[0.225,0.252,0.216,0.18,0.153,0.135,0.126,0.135,0.153,0.18,0.207,0.234],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kertek, Selomerto, Leksono",area:22000,attackPct:0.22,severityPct:0.374,risk:"Tinggi",monthly:[0.275,0.308,0.264,0.22,0.187,0.165,0.154,0.165,0.187,0.22,0.253,0.286],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Muntilan, Mungkid, Salam",area:42000,attackPct:0.18,severityPct:0.306,risk:"Tinggi",monthly:[0.225,0.252,0.216,0.18,0.153,0.135,0.126,0.135,0.153,0.18,0.207,0.234],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Parakan, Bulu, Temanggung",area:26000,attackPct:0.2,severityPct:0.34,risk:"Tinggi",monthly:[0.25,0.28,0.24,0.2,0.17,0.15,0.14,0.15,0.17,0.2,0.23,0.26],products:[{name:"Nativo 75 WG",pct:0.3},{name:"Amistar Top 325 SC",pct:0.24},{name:"Filia 525 SE",pct:0.19},{name:"Beam 75 WP",pct:0.15},{name:"Heksa 50 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Pati",district:"Sukolilo, Kayen, Pucakwangi",area:102551.3,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Kaliori, Sumber, Sale",area:38216.7,attackPct:0.07,severityPct:0.112,risk:"Rendah",monthly:[0.098,0.109,0.088,0.056,0.039,0.028,0.025,0.025,0.032,0.049,0.074,0.091],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Jepara",district:"Keling, Nalumsari, Bangsri",area:45085,attackPct:0.1,severityPct:0.165,risk:"Sedang",monthly:[0.13,0.145,0.12,0.09,0.07,0.055,0.05,0.055,0.065,0.085,0.105,0.125],products:[{name:"Nativo 75 WG",pct:0.29},{name:"Filia 525 SE",pct:0.24},{name:"Amistar Top 325 SC",pct:0.19},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Kunduran, Kedungtuban, Ngawen",area:84500,attackPct:0.08,severityPct:0.128,risk:"Rendah",monthly:[0.112,0.124,0.1,0.064,0.044,0.032,0.028,0.028,0.036,0.056,0.084,0.104],products:[{name:"Filia 525 SE",pct:0.28},{name:"Nativo 75 WG",pct:0.24},{name:"Amistar Top 325 SC",pct:0.2},{name:"Beam 75 WP",pct:0.16},{name:"Fujiwan 400 EC",pct:0.12}]},
+                        ]
+                    },
+                }
+            },
+            bawang: {
+                label: "Bawang Merah",
+                icon: "🧅",
+                hamaPenyakit: {
+                    ulat: {
+                        label: "Ulat Bawang",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Wanasari, Larangan, Bulakamba",area:32509,attackPct:0.42,severityPct:0.651,risk:"Tinggi",monthly:[0.189,0.168,0.21,0.294,0.378,0.462,0.525,0.567,0.525,0.42,0.294,0.21],products:[{name:"Brofreya 53 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Proclaim 5 SG",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Kramat, Suradadi, Warureja",area:1800,attackPct:0.3,severityPct:0.465,risk:"Tinggi",monthly:[0.135,0.12,0.15,0.21,0.27,0.33,0.375,0.405,0.375,0.3,0.21,0.15],products:[{name:"Brofreya 53 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Proclaim 5 SG",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Bukateja, Kemangkon, Kejobong",area:250,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Petarukan, Ujami, Ampelgading",area:700,attackPct:0.24,severityPct:0.372,risk:"Tinggi",monthly:[0.108,0.096,0.12,0.168,0.216,0.264,0.3,0.324,0.3,0.24,0.168,0.12],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"DKLufem 50 WG",pct:0.19},{name:"Siklon 5.7 WG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Sragi, Kesesi, Bojong",area:350,attackPct:0.2,severityPct:0.31,risk:"Sedang",monthly:[0.09,0.08,0.1,0.14,0.18,0.22,0.25,0.27,0.25,0.2,0.14,0.1],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Bawang, Tersono, Gringsing",area:250,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pekalongan",subTerritory:"Kendal",district:"Cepiring, Weleri, Ringinarum",area:1600,attackPct:0.28,severityPct:0.434,risk:"Tinggi",monthly:[0.126,0.112,0.14,0.196,0.252,0.308,0.35,0.378,0.35,0.28,0.196,0.14],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"DKLufem 50 WG",pct:0.19},{name:"Siklon 5.7 WG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Bringin, Suruh, Bancak",area:200,attackPct:0.17,severityPct:0.264,risk:"Sedang",monthly:[0.077,0.068,0.085,0.119,0.153,0.187,0.213,0.23,0.213,0.17,0.119,0.085],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Prima-FAW 50 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Salatiga",district:"Argomulyo, Tingkir",area:25,attackPct:0.12,severityPct:0.186,risk:"Rendah",monthly:[0.054,0.048,0.06,0.084,0.108,0.132,0.15,0.162,0.15,0.12,0.084,0.06],products:[{name:"Prima-FAW 50 EC",pct:0.27},{name:"Match 50 EC",pct:0.23},{name:"Cimegra 100 SC",pct:0.2},{name:"Oblivion 300 SC",pct:0.17},{name:"Simodis 100 DC",pct:0.13}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Gajah, Dempet, Mijen",area:6500,attackPct:0.36,severityPct:0.558,risk:"Tinggi",monthly:[0.162,0.144,0.18,0.252,0.324,0.396,0.45,0.486,0.45,0.36,0.252,0.18],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Prima-FAW 50 EC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Kudus",district:"Undaan, Mejobo, Jekulo",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Prima-FAW 50 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Grobogan",district:"Penawangan, Klambu, Godong",area:2200,attackPct:0.3,severityPct:0.465,risk:"Tinggi",monthly:[0.135,0.12,0.15,0.21,0.27,0.33,0.375,0.405,0.375,0.3,0.21,0.15],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Prima-FAW 50 EC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Sragen",district:"Sidoharjo, Tanon, Masaran",area:450,attackPct:0.21,severityPct:0.326,risk:"Sedang",monthly:[0.095,0.084,0.105,0.147,0.189,0.231,0.263,0.284,0.263,0.21,0.147,0.105],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Karanganyar",district:"Jumantono, Mojogedang, Jatipuro",area:250,attackPct:0.17,severityPct:0.264,risk:"Sedang",monthly:[0.077,0.068,0.085,0.119,0.153,0.187,0.213,0.23,0.213,0.17,0.119,0.085],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Sukoharjo",district:"Polokarto, Bendosari, Weru",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Klaten",district:"Wedi, Cawas, Bayat",area:450,attackPct:0.21,severityPct:0.326,risk:"Sedang",monthly:[0.095,0.084,0.105,0.147,0.189,0.231,0.263,0.284,0.263,0.21,0.147,0.105],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Boyolali",district:"Selo, Cepogo, Ampel",area:900,attackPct:0.24,severityPct:0.372,risk:"Tinggi",monthly:[0.108,0.096,0.12,0.168,0.216,0.264,0.3,0.324,0.3,0.24,0.168,0.12],products:[{name:"Brofreya 53 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"DKLufem 50 WG",pct:0.19},{name:"Siklon 5.7 WG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Solo",subTerritory:"Wonogiri",district:"Eromoko, Pracimantoro, Wuryantoro",area:200,attackPct:0.16,severityPct:0.248,risk:"Sedang",monthly:[0.072,0.064,0.08,0.112,0.144,0.176,0.2,0.216,0.2,0.16,0.112,0.08],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Gunung Kidul",district:"Semin, Ponjong, Wonosari",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Bantul",district:"Sanden, Kretek, Imogiri",area:700,attackPct:0.27,severityPct:0.419,risk:"Tinggi",monthly:[0.122,0.108,0.135,0.189,0.243,0.297,0.338,0.365,0.338,0.27,0.189,0.135],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Proclaim 5 SG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Sleman",district:"Prambanan, Kalasan, Berbah",area:200,attackPct:0.16,severityPct:0.248,risk:"Sedang",monthly:[0.072,0.064,0.08,0.112,0.144,0.176,0.2,0.216,0.2,0.16,0.112,0.08],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Kulonprogo",district:"Panjatan, Galur, Lendah",area:400,attackPct:0.22,severityPct:0.341,risk:"Sedang",monthly:[0.099,0.088,0.11,0.154,0.198,0.242,0.275,0.297,0.275,0.22,0.154,0.11],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Purworejo",district:"Grabag, Ngombol, Purwodadi",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Kebumen",district:"Mirit, Ambal, Buluspesantren",area:500,attackPct:0.22,severityPct:0.341,risk:"Sedang",monthly:[0.099,0.088,0.11,0.154,0.198,0.242,0.275,0.297,0.275,0.22,0.154,0.11],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Cilacap",district:"Kroya, Adipala, Maos",area:350,attackPct:0.19,severityPct:0.295,risk:"Sedang",monthly:[0.086,0.076,0.095,0.133,0.171,0.209,0.238,0.257,0.238,0.19,0.133,0.095],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Kebumen",subTerritory:"Banyumas",district:"Sumbang, Kembaran, Sokaraja",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Proclaim 5 SG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Batur, Pejawaran, Wanayasa",area:250,attackPct:0.16,severityPct:0.248,risk:"Sedang",monthly:[0.072,0.064,0.08,0.112,0.144,0.176,0.2,0.216,0.2,0.16,0.112,0.08],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Prima-FAW 50 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kejajar, Garung, Kertek",area:200,attackPct:0.15,severityPct:0.233,risk:"Sedang",monthly:[0.068,0.06,0.075,0.105,0.135,0.165,0.188,0.203,0.188,0.15,0.105,0.075],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Prima-FAW 50 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Ngablak, Grabag",area:800,attackPct:0.22,severityPct:0.341,risk:"Sedang",monthly:[0.099,0.088,0.11,0.154,0.198,0.242,0.275,0.297,0.275,0.22,0.154,0.11],products:[{name:"DKLufem 50 WG",pct:0.28},{name:"Brofreya 53 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Prima-FAW 50 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Parakan, Bulu, Kledung",area:1400,attackPct:0.26,severityPct:0.403,risk:"Tinggi",monthly:[0.117,0.104,0.13,0.182,0.234,0.286,0.325,0.351,0.325,0.26,0.182,0.13],products:[{name:"Brofreya 53 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"DKLufem 50 WG",pct:0.19},{name:"Prima-FAW 50 EC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Pati",district:"Batangan, Jaken, Jakenan",area:3800,attackPct:0.34,severityPct:0.527,risk:"Tinggi",monthly:[0.153,0.136,0.17,0.238,0.306,0.374,0.425,0.459,0.425,0.34,0.238,0.17],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Siklon 5.7 WG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Kaliori, Sumber, Sulang",area:700,attackPct:0.23,severityPct:0.357,risk:"Tinggi",monthly:[0.104,0.092,0.115,0.161,0.207,0.253,0.288,0.311,0.288,0.23,0.161,0.115],products:[{name:"Cimegra 100 SC",pct:0.3},{name:"Simodis 100 DC",pct:0.24},{name:"Match 50 EC",pct:0.19},{name:"Siklon 5.7 WG",pct:0.15},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Jepara",district:"Nalumsari, Mayong, Welahan",area:500,attackPct:0.21,severityPct:0.326,risk:"Sedang",monthly:[0.095,0.084,0.105,0.147,0.189,0.231,0.263,0.284,0.263,0.21,0.147,0.105],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Kunduran, Ngawen, Todanan",area:300,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.081,0.072,0.09,0.126,0.162,0.198,0.225,0.243,0.225,0.18,0.126,0.09],products:[{name:"Match 50 EC",pct:0.28},{name:"Cimegra 100 SC",pct:0.24},{name:"Simodis 100 DC",pct:0.2},{name:"Siklon 5.7 WG",pct:0.16},{name:"DKFenzo 120 SC",pct:0.12}]},
+                        ]
+                    },
+                }
+            },
+            kentang: {
+                label: "Kentang",
+                icon: "🥔",
+                hamaPenyakit: {
+                    busukDaun: {
+                        label: "Busuk Daun (Phytophthora infestans)",
+                        type: "patogen",
+                        productLabel: "Fungisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Sirampog, Paguyangan",area:2528,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Bumijawa, Bojong",area:299,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Karangreja, Kutasari, Bobotsari",area:370,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Pulosari, Moga, Belik",area:159,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Petungkriyono, Lebakbarang, Paninggaran",area:697,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Bawang, Blado, Reban",area:2350,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Sumowono, Bandungan",area:101,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Batur, Pejawaran, Wanayasa, Kalibening",area:4411,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kejajar, Garung, Kalikajar, Mojotengah, Kepil, Sapuran",area:3461,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Ngablak, Pakis, Grabag",area:509,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Wonoboyo, Tretep, Kledung, Candiroto",area:371,attackPct:0.42,severityPct:0.693,risk:"Tinggi",monthly:[0.525,0.546,0.504,0.42,0.315,0.231,0.189,0.189,0.252,0.357,0.462,0.525],products:null},
+                        ]
+                    },
+                    bercakKering: {
+                        label: "Bercak Kering (Alternaria solani)",
+                        type: "patogen",
+                        productLabel: "Fungisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Sirampog, Paguyangan",area:2528,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Bumijawa, Bojong",area:299,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Karangreja, Kutasari, Bobotsari",area:370,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Pulosari, Moga, Belik",area:159,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Petungkriyono, Lebakbarang, Paninggaran",area:697,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Bawang, Blado, Reban",area:2350,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Sumowono, Bandungan",area:101,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Batur, Pejawaran, Wanayasa, Kalibening",area:4411,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kejajar, Garung, Kalikajar, Mojotengah, Kepil, Sapuran",area:3461,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Ngablak, Pakis, Grabag",area:509,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Wonoboyo, Tretep, Kledung, Candiroto",area:371,attackPct:0.24,severityPct:0.348,risk:"Sedang",monthly:[0.156,0.144,0.168,0.204,0.252,0.288,0.312,0.324,0.3,0.24,0.192,0.168],products:null},
+                        ]
+                    },
+                    busukUmbi: {
+                        label: "Busuk Umbi",
+                        type: "patogen",
+                        productLabel: "Fungisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Sirampog, Paguyangan",area:2528,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Bumijawa, Bojong",area:299,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Karangreja, Kutasari, Bobotsari",area:370,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Pulosari, Moga, Belik",area:159,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Petungkriyono, Lebakbarang, Paninggaran",area:697,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Bawang, Blado, Reban",area:2350,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Sumowono, Bandungan",area:101,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Batur, Pejawaran, Wanayasa, Kalibening",area:4411,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kejajar, Garung, Kalikajar, Mojotengah, Kepil, Sapuran",area:3461,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Ngablak, Pakis, Grabag",area:509,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Wonoboyo, Tretep, Kledung, Candiroto",area:371,attackPct:0.25,severityPct:0.388,risk:"Tinggi",monthly:[0.288,0.3,0.275,0.225,0.175,0.15,0.138,0.15,0.188,0.225,0.263,0.288],products:null},
+                        ]
+                    },
+                    layuBakteri: {
+                        label: "Layu Bakteri (Ralstonia solanacearum)",
+                        type: "patogen",
+                        productLabel: "Bakterisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Sirampog, Paguyangan",area:2528,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Brebes",subTerritory:"Tegal",district:"Bumijawa, Bojong",area:299,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Brebes",subTerritory:"Purbalingga",district:"Karangreja, Kutasari, Bobotsari",area:370,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pemalang",district:"Pulosari, Moga, Belik",area:159,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Pekalongan",subTerritory:"Pekalongan",district:"Petungkriyono, Lebakbarang, Paninggaran",area:697,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Pekalongan",subTerritory:"Batang",district:"Bawang, Blado, Reban",area:2350,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Sumowono, Bandungan",area:101,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Batur, Pejawaran, Wanayasa, Kalibening",area:4411,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kejajar, Garung, Kalikajar, Mojotengah, Kepil, Sapuran",area:3461,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Ngablak, Pakis, Grabag",area:509,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Wonoboyo, Tretep, Kledung, Candiroto",area:371,attackPct:0.22,severityPct:0.352,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.22,0.198,0.176,0.165,0.176,0.198,0.22,0.231,0.242],products:null},
+                        ]
+                    },
+                }
+            },
+            cabai: {
+                label: "Cabai",
+                icon: "🌶️",
+                hamaPenyakit: {
+                    kutu: {
+                        label: "Kutu-kutuan (Aphid)",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.322,severityPct:0.499,risk:"Tinggi",monthly:[0.225,0.209,0.242,0.29,0.338,0.386,0.419,0.435,0.403,0.338,0.274,0.242],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.266,severityPct:0.412,risk:"Tinggi",monthly:[0.186,0.173,0.2,0.239,0.279,0.319,0.346,0.359,0.333,0.279,0.226,0.2],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.252,severityPct:0.391,risk:"Tinggi",monthly:[0.176,0.164,0.189,0.227,0.265,0.302,0.328,0.34,0.315,0.265,0.214,0.189],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.28,severityPct:0.434,risk:"Tinggi",monthly:[0.196,0.182,0.21,0.252,0.294,0.336,0.364,0.378,0.35,0.294,0.238,0.21],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.294,severityPct:0.456,risk:"Tinggi",monthly:[0.206,0.191,0.221,0.265,0.309,0.353,0.382,0.397,0.368,0.309,0.25,0.221],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.308,severityPct:0.477,risk:"Tinggi",monthly:[0.216,0.2,0.231,0.277,0.323,0.37,0.4,0.416,0.385,0.323,0.262,0.231],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.308,severityPct:0.477,risk:"Tinggi",monthly:[0.216,0.2,0.231,0.277,0.323,0.37,0.4,0.416,0.385,0.323,0.262,0.231],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.266,severityPct:0.412,risk:"Tinggi",monthly:[0.186,0.173,0.2,0.239,0.279,0.319,0.346,0.359,0.333,0.279,0.226,0.2],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.28,severityPct:0.434,risk:"Tinggi",monthly:[0.196,0.182,0.21,0.252,0.294,0.336,0.364,0.378,0.35,0.294,0.238,0.21],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Alika 247 ZC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                        ]
+                    },
+                    tungau: {
+                        label: "Tungau",
+                        type: "hama",
+                        productLabel: "Akarisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.253,severityPct:0.38,risk:"Tinggi",monthly:[0.164,0.152,0.177,0.215,0.266,0.304,0.329,0.342,0.316,0.253,0.202,0.177],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Agrimec 18 EC",pct:0.24},{name:"Wiper 50 EC",pct:0.19},{name:"Numectin 20 EC",pct:0.15},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.209,severityPct:0.314,risk:"Sedang",monthly:[0.136,0.125,0.146,0.178,0.219,0.251,0.272,0.282,0.261,0.209,0.167,0.146],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.198,severityPct:0.297,risk:"Sedang",monthly:[0.129,0.119,0.139,0.168,0.208,0.238,0.257,0.267,0.248,0.198,0.158,0.139],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.22,severityPct:0.33,risk:"Sedang",monthly:[0.143,0.132,0.154,0.187,0.231,0.264,0.286,0.297,0.275,0.22,0.176,0.154],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.231,severityPct:0.347,risk:"Sedang",monthly:[0.15,0.139,0.162,0.196,0.243,0.277,0.3,0.312,0.289,0.231,0.185,0.162],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.242,severityPct:0.363,risk:"Tinggi",monthly:[0.157,0.145,0.169,0.206,0.254,0.29,0.315,0.327,0.303,0.242,0.194,0.169],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Agrimec 18 EC",pct:0.24},{name:"Wiper 50 EC",pct:0.19},{name:"Numectin 20 EC",pct:0.15},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.242,severityPct:0.363,risk:"Tinggi",monthly:[0.157,0.145,0.169,0.206,0.254,0.29,0.315,0.327,0.303,0.242,0.194,0.169],products:[{name:"Pegasus 500 SC",pct:0.3},{name:"Agrimec 18 EC",pct:0.24},{name:"Wiper 50 EC",pct:0.19},{name:"Numectin 20 EC",pct:0.15},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.209,severityPct:0.314,risk:"Sedang",monthly:[0.136,0.125,0.146,0.178,0.219,0.251,0.272,0.282,0.261,0.209,0.167,0.146],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.22,severityPct:0.33,risk:"Sedang",monthly:[0.143,0.132,0.154,0.187,0.231,0.264,0.286,0.297,0.275,0.22,0.176,0.154],products:[{name:"Agrimec 18 EC",pct:0.28},{name:"Pegasus 500 SC",pct:0.24},{name:"Wiper 50 EC",pct:0.2},{name:"Numectin 20 EC",pct:0.16},{name:"Abamax 18 EC",pct:0.12}]},
+                        ]
+                    },
+                    thrips: {
+                        label: "Thrips",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.368,severityPct:0.57,risk:"Tinggi",monthly:[0.258,0.239,0.276,0.331,0.405,0.46,0.497,0.515,0.478,0.386,0.313,0.276],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.304,severityPct:0.471,risk:"Tinggi",monthly:[0.213,0.198,0.228,0.274,0.334,0.38,0.41,0.426,0.395,0.319,0.258,0.228],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.288,severityPct:0.446,risk:"Tinggi",monthly:[0.202,0.187,0.216,0.259,0.317,0.36,0.389,0.403,0.374,0.302,0.245,0.216],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.32,severityPct:0.496,risk:"Tinggi",monthly:[0.224,0.208,0.24,0.288,0.352,0.4,0.432,0.448,0.416,0.336,0.272,0.24],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.336,severityPct:0.521,risk:"Tinggi",monthly:[0.235,0.218,0.252,0.302,0.37,0.42,0.454,0.47,0.437,0.353,0.286,0.252],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.352,severityPct:0.546,risk:"Tinggi",monthly:[0.246,0.229,0.264,0.317,0.387,0.44,0.475,0.493,0.458,0.37,0.299,0.264],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.352,severityPct:0.546,risk:"Tinggi",monthly:[0.246,0.229,0.264,0.317,0.387,0.44,0.475,0.493,0.458,0.37,0.299,0.264],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.304,severityPct:0.471,risk:"Tinggi",monthly:[0.213,0.198,0.228,0.274,0.334,0.38,0.41,0.426,0.395,0.319,0.258,0.228],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.32,severityPct:0.496,risk:"Tinggi",monthly:[0.224,0.208,0.24,0.288,0.352,0.4,0.432,0.448,0.416,0.336,0.272,0.24],products:[{name:"Agrimec 18 EC",pct:0.3},{name:"Pegasus 500 SC",pct:0.24},{name:"Pro 100 SL",pct:0.19},{name:"Acero 40/4 WP",pct:0.15},{name:"Wiper 50 EC",pct:0.12}]},
+                        ]
+                    },
+                    ulatBuah: {
+                        label: "Ulat Buah",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.276,severityPct:0.442,risk:"Tinggi",monthly:[0.331,0.345,0.317,0.276,0.235,0.193,0.179,0.193,0.235,0.276,0.304,0.331],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.228,severityPct:0.365,risk:"Tinggi",monthly:[0.274,0.285,0.262,0.228,0.194,0.16,0.148,0.16,0.194,0.228,0.251,0.274],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.216,severityPct:0.346,risk:"Sedang",monthly:[0.259,0.27,0.248,0.216,0.184,0.151,0.14,0.151,0.184,0.216,0.238,0.259],products:[{name:"Proclaim 5 SG",pct:0.28},{name:"Valacor 35 WG",pct:0.24},{name:"Emaktin 32 EC",pct:0.2},{name:"Alika 247 ZC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.24,severityPct:0.384,risk:"Tinggi",monthly:[0.288,0.3,0.276,0.24,0.204,0.168,0.156,0.168,0.204,0.24,0.264,0.288],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.252,severityPct:0.403,risk:"Tinggi",monthly:[0.302,0.315,0.29,0.252,0.214,0.176,0.164,0.176,0.214,0.252,0.277,0.302],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.264,severityPct:0.422,risk:"Tinggi",monthly:[0.317,0.33,0.304,0.264,0.224,0.185,0.172,0.185,0.224,0.264,0.29,0.317],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.264,severityPct:0.422,risk:"Tinggi",monthly:[0.317,0.33,0.304,0.264,0.224,0.185,0.172,0.185,0.224,0.264,0.29,0.317],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.228,severityPct:0.365,risk:"Tinggi",monthly:[0.274,0.285,0.262,0.228,0.194,0.16,0.148,0.16,0.194,0.228,0.251,0.274],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.24,severityPct:0.384,risk:"Tinggi",monthly:[0.288,0.3,0.276,0.24,0.204,0.168,0.156,0.168,0.204,0.24,0.264,0.288],products:[{name:"Valacor 35 WG",pct:0.3},{name:"Proclaim 5 SG",pct:0.24},{name:"Emaktin 32 EC",pct:0.19},{name:"Alika 247 ZC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                        ]
+                    },
+                    ulatDaun: {
+                        label: "Ulat Daun",
+                        type: "hama",
+                        productLabel: "Insektisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.23,severityPct:0.357,risk:"Tinggi",monthly:[0.242,0.253,0.242,0.219,0.196,0.184,0.184,0.196,0.219,0.242,0.253,0.253],products:[{name:"Proclaim 5 SG",pct:0.3},{name:"Match 50 EC",pct:0.24},{name:"Cimegra 100 SC",pct:0.19},{name:"Emaktin 32 EC",pct:0.15},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.19,severityPct:0.295,risk:"Sedang",monthly:[0.2,0.209,0.2,0.181,0.162,0.152,0.152,0.162,0.181,0.2,0.209,0.209],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.18,severityPct:0.279,risk:"Sedang",monthly:[0.189,0.198,0.189,0.171,0.153,0.144,0.144,0.153,0.171,0.189,0.198,0.198],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.2,severityPct:0.31,risk:"Sedang",monthly:[0.21,0.22,0.21,0.19,0.17,0.16,0.16,0.17,0.19,0.21,0.22,0.22],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.21,severityPct:0.326,risk:"Sedang",monthly:[0.221,0.231,0.221,0.2,0.179,0.168,0.168,0.179,0.2,0.221,0.231,0.231],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.22,severityPct:0.341,risk:"Sedang",monthly:[0.231,0.242,0.231,0.209,0.187,0.176,0.176,0.187,0.209,0.231,0.242,0.242],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.22,severityPct:0.341,risk:"Sedang",monthly:[0.231,0.242,0.231,0.209,0.187,0.176,0.176,0.187,0.209,0.231,0.242,0.242],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.19,severityPct:0.295,risk:"Sedang",monthly:[0.2,0.209,0.2,0.181,0.162,0.152,0.152,0.162,0.181,0.2,0.209,0.209],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.2,severityPct:0.31,risk:"Sedang",monthly:[0.21,0.22,0.21,0.19,0.17,0.16,0.16,0.17,0.19,0.21,0.22,0.22],products:[{name:"Match 50 EC",pct:0.28},{name:"Proclaim 5 SG",pct:0.24},{name:"Cimegra 100 SC",pct:0.2},{name:"Emaktin 32 EC",pct:0.16},{name:"Oblivion 300 SC",pct:0.12}]},
+                        ]
+                    },
+                    patek: {
+                        label: "Patek Buah / Antraknosa (Colletotrichum sp.)",
+                        type: "patogen",
+                        productLabel: "Fungisida",
+                        rows: [
+                            {territory:"Brebes",subTerritory:"Brebes",district:"Larangan, Wanasari, Bulakamba, Ketanggungan",area:2723,attackPct:0.315,severityPct:0.52,risk:"Tinggi",monthly:[0.394,0.41,0.378,0.315,0.236,0.173,0.142,0.142,0.189,0.268,0.347,0.394],products:null},
+                            {territory:"Wonosobo",subTerritory:"Banjarnegara",district:"Punggelan, Banjarmangu, Pejawaran, Wanayasa",area:2340,attackPct:0.345,severityPct:0.569,risk:"Tinggi",monthly:[0.431,0.449,0.414,0.345,0.259,0.19,0.155,0.155,0.207,0.293,0.38,0.431],products:null},
+                            {territory:"Wonosobo",subTerritory:"Wonosobo",district:"Kalikajar, Garung, Watumalang, Kejajar",area:1900,attackPct:0.345,severityPct:0.569,risk:"Tinggi",monthly:[0.431,0.449,0.414,0.345,0.259,0.19,0.155,0.155,0.207,0.293,0.38,0.431],products:null},
+                            {territory:"Wonosobo",subTerritory:"Magelang",district:"Pakis, Dukun, Sawangan, Grabag",area:3582,attackPct:0.33,severityPct:0.545,risk:"Tinggi",monthly:[0.413,0.429,0.396,0.33,0.248,0.182,0.149,0.149,0.198,0.281,0.363,0.413],products:null},
+                            {territory:"Pati",subTerritory:"Blora",district:"Todanan, Kunduran, Japah, Ngawen",area:1119,attackPct:0.27,severityPct:0.446,risk:"Tinggi",monthly:[0.338,0.351,0.324,0.27,0.203,0.149,0.122,0.122,0.162,0.23,0.297,0.338],products:null},
+                            {territory:"Pati",subTerritory:"Rembang",district:"Sedan, Sale, Sarang, Sumber",area:692,attackPct:0.255,severityPct:0.421,risk:"Tinggi",monthly:[0.319,0.332,0.306,0.255,0.191,0.14,0.115,0.115,0.153,0.217,0.281,0.319],products:null},
+                            {territory:"Semarang",subTerritory:"Demak",district:"Guntur, Dempet, Mranggen, Karangawen",area:781,attackPct:0.3,severityPct:0.495,risk:"Tinggi",monthly:[0.375,0.39,0.36,0.3,0.225,0.165,0.135,0.135,0.18,0.255,0.33,0.375],products:null},
+                            {territory:"Semarang",subTerritory:"Semarang",district:"Getasan, Bandungan, Sumowono, Bringin",area:1304,attackPct:0.33,severityPct:0.545,risk:"Tinggi",monthly:[0.413,0.429,0.396,0.33,0.248,0.182,0.149,0.149,0.198,0.281,0.363,0.413],products:null},
+                            {territory:"Wonosobo",subTerritory:"Temanggung",district:"Kledung, Bulu, Tlogomulyo, Selopampang",area:2848,attackPct:0.33,severityPct:0.545,risk:"Tinggi",monthly:[0.413,0.429,0.396,0.33,0.248,0.182,0.149,0.149,0.198,0.281,0.363,0.413],products:null},
+                        ]
+                    },
+                }
+            },
+        };
 
         // STATE
         let activeTerritory = "Semua JT";
         let activeSubTerritory = "Semua Kab/Kota";
-        let cropMarketChart, pesticideSplitChart, belukMonthlyChart;
+        let activeKomoditas = Object.keys(datasetHamaPenyakit)[0];
+        let activeHamaPenyakit = Object.keys(datasetHamaPenyakit[activeKomoditas].hamaPenyakit)[0];
+        let cropMarketChart, pesticideSplitChart, hpMonthlyChart, hpProductChart;
 
         // INITIALIZATION
         window.addEventListener('DOMContentLoaded', () => {
@@ -415,8 +734,10 @@
             renderTerritoryButtons();
             renderSubTerritoryButtons();
             updateDashboardData();
-            initBelukTable();
+            renderKomoditasButtons();
+            renderHpButtons();
             initCharts();
+            updateHamaPenyakitView();
         });
 
         // TAB SWITCHING
@@ -473,14 +794,14 @@
             renderTerritoryButtons();
             renderSubTerritoryButtons();
             updateDashboardData();
-            filterBelukTable();
+            updateHamaPenyakitView();
         }
 
         function selectSubTerritory(subName) {
             activeSubTerritory = subName;
             renderSubTerritoryButtons();
             updateDashboardData();
-            filterBelukTable();
+            updateHamaPenyakitView();
         }
 
         // CALCULATE AND UPDATE DATA
@@ -547,7 +868,10 @@
             document.getElementById('stat-total-insec').innerHTML = formatCurrencyShort(totalInsec);
             document.getElementById('stat-total-fung-herb').innerText = `${formatCurrencyShort(totalFung)} / ${formatCurrencyShort(totalHerb)}`;
 
-            renderCropCards(cropCalculated);
+            const activeTObj = datasetTerritory.find(t => t.name === activeTerritory);
+            const incompleteCrops = (activeTerritory !== "Semua JT" && activeTObj.incompleteCrops) ? activeTObj.incompleteCrops : [];
+
+            renderCropCards(cropCalculated, incompleteCrops);
             updateCharts(cropCalculated, totalInsec, totalFung, totalHerb);
         }
 
@@ -563,7 +887,7 @@
         }
 
         // CROP CARDS
-        function renderCropCards(crops) {
+        function renderCropCards(crops, incompleteCrops = []) {
             const container = document.getElementById('crop-cards-container');
             const cropMeta = [
                 { key: 'padi', name: 'Padi', icon: '🌾', color: 'emerald' },
@@ -575,13 +899,15 @@
 
             container.innerHTML = cropMeta.map(m => {
                 const c = crops[m.key];
+                const isIncomplete = incompleteCrops.includes(m.key);
                 return `
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 glass-card-hover">
+                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between space-y-3 glass-card-hover ${isIncomplete ? 'border border-amber-500/30' : ''}">
                         <div>
                             <div class="flex items-center justify-between">
                                 <span class="text-lg">${m.icon}</span>
                                 <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${m.name}</span>
                             </div>
+                            ${isIncomplete ? `<div class="mt-1.5 text-[10px] text-amber-400 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i><span>Data belum lengkap</span></div>` : ''}
                             <div class="mt-2">
                                 <div class="text-xs text-slate-400">Luas Panen</div>
                                 <div class="text-lg font-bold text-white font-mono-num">${c.ha.toLocaleString('id-ID')} <span class="text-xs text-slate-400 font-normal">Ha</span></div>
@@ -609,6 +935,7 @@
                     </div>
                 `;
             }).join('');
+            lucide.createIcons();
         }
 
         // CHARTS INIT & UPDATE
@@ -659,15 +986,15 @@
                 }
             });
 
-            // Chart 3: Beluk Seasonality
-            const ctx3 = document.getElementById('belukMonthlyChart').getContext('2d');
-            belukMonthlyChart = new Chart(ctx3, {
+            // Chart 3: Hama/Penyakit Monthly Seasonality (dynamic per komoditas + hama/penyakit terpilih)
+            const ctx3 = document.getElementById('hpMonthlyChart').getContext('2d');
+            hpMonthlyChart = new Chart(ctx3, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb (MT1)', 'Mar', 'Apr', 'Mei', 'Jun (MT2)', 'Jul', 'Agu (MT3)', 'Sep', 'Okt', 'Nov', 'Des'],
                     datasets: [{
-                        label: 'Est. Keparahan Serangan Beluk (%)',
-                        data: [12.0, 28.5, 15.0, 8.0, 18.5, 32.0, 16.0, 22.0, 14.0, 5.0, 6.5, 10.0],
+                        label: 'Est. Keparahan Serangan (%)',
+                        data: new Array(12).fill(0),
                         borderColor: '#ef4444',
                         backgroundColor: 'rgba(239, 68, 68, 0.15)',
                         fill: true,
@@ -686,6 +1013,34 @@
                             grid: { color: 'rgba(255,255,255,0.05)' }
                         },
                         x: { ticks: { color: '#94a3b8' }, grid: { display: false } }
+                    }
+                }
+            });
+
+            // Chart 4: Product Share (dynamic, horizontal bar of weighted average share)
+            const ctx4 = document.getElementById('hpProductChart').getContext('2d');
+            hpProductChart = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Rata-rata Share',
+                        data: [],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: {
+                            ticks: { color: '#94a3b8', callback: v => v + '%' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        y: { ticks: { color: '#e2e8f0', font: { size: 11 } }, grid: { display: false } }
                     }
                 }
             });
@@ -711,27 +1066,188 @@
             pesticideSplitChart.update();
         }
 
-        // BELUK TABLE LOGIC
-        function initBelukTable() {
-            filterBelukTable();
+        // ===== HAMA & PENYAKIT SECTION: NAVIGATION =====
+        function renderKomoditasButtons() {
+            const container = document.getElementById('komoditas-buttons-container');
+            container.innerHTML = Object.keys(datasetHamaPenyakit).map(key => {
+                const k = datasetHamaPenyakit[key];
+                const isActive = key === activeKomoditas;
+                const activeClass = isActive ? "bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/20" : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white";
+                return `<button onclick="selectKomoditas('${key}')" class="px-3 py-1.5 rounded-xl text-xs whitespace-nowrap transition-all ${activeClass}">${k.icon} ${k.label}</button>`;
+            }).join('');
         }
 
-        function filterBelukTable() {
-            const tbody = document.getElementById('beluk-table-body');
+        function renderHpButtons() {
+            const container = document.getElementById('hp-buttons-container');
+            const hpDict = datasetHamaPenyakit[activeKomoditas].hamaPenyakit;
+            container.innerHTML = Object.keys(hpDict).map(key => {
+                const hp = hpDict[key];
+                const isActive = key === activeHamaPenyakit;
+                const activeClass = isActive ? "bg-red-500 text-white font-semibold" : "bg-slate-900/80 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800";
+                const typeIcon = hp.type === 'patogen' ? '🦠' : '🐛';
+                return `<button onclick="selectHamaPenyakit('${key}')" class="px-2.5 py-1 rounded-lg text-[11px] whitespace-nowrap transition-all ${activeClass}">${typeIcon} ${hp.label}</button>`;
+            }).join('');
+        }
+
+        function selectKomoditas(key) {
+            activeKomoditas = key;
+            activeHamaPenyakit = Object.keys(datasetHamaPenyakit[key].hamaPenyakit)[0];
+            renderKomoditasButtons();
+            renderHpButtons();
+            updateHamaPenyakitView();
+        }
+
+        function selectHamaPenyakit(key) {
+            activeHamaPenyakit = key;
+            renderHpButtons();
+            updateHamaPenyakitView();
+        }
+
+        function getActiveHpDef() {
+            return datasetHamaPenyakit[activeKomoditas].hamaPenyakit[activeHamaPenyakit];
+        }
+
+        function getTerritoryFilteredRows(rows) {
+            return rows.filter(row => {
+                const matchTerritory = (activeTerritory === "Semua JT") || (row.territory === activeTerritory);
+                const matchSub = (activeTerritory === "Semua JT") || (activeSubTerritory.startsWith("Semua Sub")) || (row.subTerritory === activeSubTerritory);
+                return matchTerritory && matchSub;
+            });
+        }
+
+        // ===== HAMA & PENYAKIT SECTION: CALCULATIONS =====
+        const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        function computeWeightedMonthly(rows) {
+            const totalArea = rows.reduce((s, r) => s + r.area, 0);
+            if (totalArea === 0) return new Array(12).fill(0);
+            const monthly = new Array(12).fill(0);
+            rows.forEach(r => {
+                r.monthly.forEach((v, i) => { monthly[i] += v * r.area; });
+            });
+            return monthly.map(v => (v / totalArea) * 100);
+        }
+
+        function computeAggregatedProducts(rows) {
+            const map = {};
+            let totalArea = 0;
+            rows.forEach(r => {
+                if (!r.products) return;
+                totalArea += r.area;
+                r.products.forEach(p => {
+                    map[p.name] = (map[p.name] || 0) + (p.pct * r.area);
+                });
+            });
+            if (totalArea === 0) return null;
+            const arr = Object.entries(map).map(([name, score]) => ({ name, share: (score / totalArea) * 100 }));
+            arr.sort((a, b) => b.share - a.share);
+            return arr.slice(0, 5);
+        }
+
+        // ===== HAMA & PENYAKIT SECTION: MAIN VIEW UPDATE =====
+        function updateHamaPenyakitView() {
+            const hpDef = getActiveHpDef();
+            const komoditasDef = datasetHamaPenyakit[activeKomoditas];
+            const rows = getTerritoryFilteredRows(hpDef.rows);
+
+            document.getElementById('hp-chart-title').querySelector('span').innerText = `Tren Fluktuasi Bulanan Keparahan Serangan - ${hpDef.label} (%)`;
+            document.getElementById('hp-table-title').innerText = `Tabel Analisis ${hpDef.label} & Top 5 ${hpDef.productLabel} Market Leader per District`;
+            document.getElementById('hp-table-subtitle').innerText = `Menampilkan data Luas ${komoditasDef.label}, Tingkat Risiko, Keparahan, dan Top Produk (${hpDef.productLabel})`;
+            document.getElementById('hp-table-col-area').innerText = `Luas ${komoditasDef.label}`;
+            document.getElementById('hp-table-col-products').innerText = `Top 5 ${hpDef.productLabel} Market Leader`;
+            document.getElementById('hp-product-chart-title').querySelector('span').innerText = `Product Share Rata-rata Tertimbang - ${hpDef.productLabel}`;
+            document.getElementById('hp-product-chart-subtitle').innerText = `Top 5 ${hpDef.productLabel} pada wilayah terpilih (${komoditasDef.label} - ${hpDef.label})`;
+
+            renderOverviewCards(rows, hpDef);
+            renderMonthlyChart(rows);
+            renderProductChart(rows);
+            filterHpTable();
+        }
+
+        function renderOverviewCards(rows, hpDef) {
+            const container = document.getElementById('hp-overview-cards');
+
+            const highRiskSubs = [...new Set(rows.filter(r => r.risk === 'Tinggi').map(r => r.subTerritory))];
+            const card1Value = highRiskSubs.length > 0 ? highRiskSubs.join(', ') : 'Tidak ada wilayah risiko tinggi';
+
+            const monthly = computeWeightedMonthly(rows);
+            let peakText = 'Data tidak tersedia';
+            if (rows.length > 0) {
+                const indexed = monthly.map((v, i) => ({ i, v }));
+                indexed.sort((a, b) => b.v - a.v);
+                const top2 = indexed.slice(0, 2).sort((a, b) => a.i - b.i);
+                peakText = top2.map(m => `${MONTH_SHORT[m.i]} (${m.v.toFixed(1)}%)`).join(' & ');
+            }
+
+            const aggProducts = computeAggregatedProducts(rows);
+            const productText = (aggProducts && aggProducts.length > 0) ? aggProducts.slice(0, 3).map(p => p.name).join(', ') : 'Data belum tersedia';
+
+            container.innerHTML = `
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-red-500">
+                    <span class="text-xs text-slate-400 font-medium">Wilayah Risiko Tinggi - ${hpDef.label}</span>
+                    <div class="text-lg font-bold text-red-400 mt-1">${card1Value}</div>
+                    <p class="text-xs text-slate-400 mt-1">Berdasarkan klasifikasi Risiko = "Tinggi" pada filter terpilih</p>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-amber-500">
+                    <span class="text-xs text-slate-400 font-medium">Puncak Serangan Bulanan</span>
+                    <div class="text-lg font-bold text-amber-400 mt-1">${peakText}</div>
+                    <p class="text-xs text-slate-400 mt-1">Rata-rata tertimbang luas area district terpilih</p>
+                </div>
+                <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
+                    <span class="text-xs text-slate-400 font-medium">${hpDef.productLabel} Andalan</span>
+                    <div class="text-lg font-bold text-emerald-400 mt-1">${productText}</div>
+                    <p class="text-xs text-slate-400 mt-1">${aggProducts ? 'Top produk berdasarkan rata-rata tertimbang share' : 'Belum ada data top produk untuk jenis ini'}</p>
+                </div>
+            `;
+        }
+
+        function renderMonthlyChart(rows) {
+            if (!hpMonthlyChart) return;
+            const monthly = computeWeightedMonthly(rows);
+            hpMonthlyChart.data.datasets[0].data = monthly.map(v => Number(v.toFixed(2)));
+            hpMonthlyChart.update();
+        }
+
+        function renderProductChart(rows) {
+            if (!hpProductChart) return;
+            const canvas = document.getElementById('hpProductChart');
+            const emptyEl = document.getElementById('hp-product-chart-empty');
+            const aggProducts = computeAggregatedProducts(rows);
+
+            if (!aggProducts) {
+                canvas.classList.add('hidden');
+                emptyEl.classList.remove('hidden');
+                return;
+            }
+
+            canvas.classList.remove('hidden');
+            emptyEl.classList.add('hidden');
+
+            const sorted = [...aggProducts].reverse();
+            hpProductChart.data.labels = sorted.map(p => p.name);
+            hpProductChart.data.datasets[0].data = sorted.map(p => Number(p.share.toFixed(1)));
+            hpProductChart.update();
+        }
+
+        // ===== HAMA & PENYAKIT SECTION: TABLE =====
+        function filterHpTable() {
+            const hpDef = getActiveHpDef();
+            const komoditasDef = datasetHamaPenyakit[activeKomoditas];
+            const tbody = document.getElementById('hp-table-body');
             const search = document.getElementById('table-search-input').value.toLowerCase();
 
-            let filtered = datasetBeluk.filter(item => {
-                const matchTerritory = (activeTerritory === "Semua JT") || (item.territory === activeTerritory);
-                const matchSub = (activeSubTerritory.startsWith("Semua Sub")) || (item.subTerritory === activeSubTerritory);
-                const matchSearch = item.territory.toLowerCase().includes(search) ||
-                                    item.subTerritory.toLowerCase().includes(search) ||
-                                    item.district.toLowerCase().includes(search) ||
-                                    item.top5.toLowerCase().includes(search);
-                return matchTerritory && matchSub && matchSearch;
+            const territoryRows = getTerritoryFilteredRows(hpDef.rows);
+
+            const filtered = territoryRows.filter(item => {
+                const productText = item.products ? item.products.map(p => p.name).join(' ').toLowerCase() : '';
+                return item.territory.toLowerCase().includes(search) ||
+                       item.subTerritory.toLowerCase().includes(search) ||
+                       item.district.toLowerCase().includes(search) ||
+                       productText.includes(search);
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Tidak ada data district yang sesuai filter.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-500">Tidak ada data district yang sesuai filter untuk ${komoditasDef.label} - ${hpDef.label}.</td></tr>`;
                 return;
             }
 
@@ -741,18 +1257,20 @@
                 else if (item.risk === 'Sedang') riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Sedang</span>`;
                 else riskBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Rendah</span>`;
 
-                const formattedTop5 = item.top5.replace(/\n/g, '<br>');
+                const productsHtml = item.products
+                    ? item.products.map((p, i) => `${i + 1}. ${p.name} (${Math.round(p.pct * 100)}%)`).join('<br>')
+                    : `<span class="text-slate-500 italic">Data belum tersedia</span>`;
 
                 return `
                     <tr class="hover:bg-slate-800/40 transition-colors">
                         <td class="py-2.5 px-3 font-semibold text-slate-200">${item.territory}</td>
                         <td class="py-2.5 px-3 text-slate-300">${item.subTerritory}</td>
                         <td class="py-2.5 px-3 text-slate-400">${item.district}</td>
-                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-200">${item.area.toLocaleString('id-ID')} Ha</td>
-                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-300">${item.attack}</td>
-                        <td class="py-2.5 px-3 text-right font-mono-num font-bold text-amber-400">${item.severity}</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-200">${Math.round(item.area).toLocaleString('id-ID')} Ha</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num text-slate-300">${(item.attackPct * 100).toFixed(1)}%</td>
+                        <td class="py-2.5 px-3 text-right font-mono-num font-bold text-amber-400">${(item.severityPct * 100).toFixed(1)}%</td>
                         <td class="py-2.5 px-3 text-center">${riskBadge}</td>
-                        <td class="py-2.5 px-3 text-[11px] leading-relaxed text-slate-300">${formattedTop5}</td>
+                        <td class="py-2.5 px-3 text-[11px] leading-relaxed text-slate-300">${productsHtml}</td>
                     </tr>
                 `;
             }).join('');
