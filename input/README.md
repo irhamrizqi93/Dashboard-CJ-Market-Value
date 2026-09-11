@@ -13,15 +13,28 @@ Folder ini dua gunanya:
 ## Cara memperbarui data
 
 ```bash
+# 1. simpan berkas mentahnya
+#    input/mentah/2026-10_nama-survey.xlsx      ← pola nama: YYYY-MM_keterangan
+
 python3 data_csv.py export     # data/*.json  →  input/*.csv
-# buka input/*.csv di Excel, sunting, simpan sebagai CSV lagi
-python3 data_csv.py import     # input/*.csv  →  data/*.json
-python3 build.py               # tanam ke index.html
-python3 build.py --check       # pastikan sinkron
+# 2. buka input/*.csv di Excel, sunting, simpan sebagai CSV lagi
+python3 data_csv.py import     # input/*.csv  →  data/*.json   (ditolak kalau ada yang janggal)
+
+# 3. perbarui data/_sumber.json — tanggal data, versi, sumbernya dari mana
+python3 build.py               # tanam ke index.html + kaki halaman
+
+python3 periksa.py             # ← satu perintah, memeriksa semuanya
 ```
 
-Lalu buka `index.html` di browser dan pastikan angkanya berubah seperti yang kamu harapkan,
-sebelum commit.
+Kalau `periksa.py` merah, **jangan commit**. Kalau hijau, buka `index.html` di browser dan
+pastikan angkanya berubah seperti yang kamu harapkan — mesin cuma bisa memastikan datanya tidak
+hilang di jalan, bukan bahwa angkanya benar.
+
+## Berkas mentah
+
+Taruh di `input/mentah/`, pakai pola nama **`YYYY-MM_keterangan.xlsx`** supaya urut sendiri dan
+ketahuan mana yang terbaru. Berkas mentah tidak pernah dibaca dashboard — dia arsip, supaya
+angka di `data/*.json` bisa ditelusuri asalnya.
 
 ## Tiga lembar kerjanya
 
@@ -41,3 +54,8 @@ Penjelasan tiap kolom → [`../SKEMA.md`](../SKEMA.md).
 - **Baris produk yang kosong tetap kosong.** Kalau kelima kolom `produkN_nama` kosong, dashboard
   menampilkan "Data belum tersedia" — itu memang disengaja, bukan kerusakan.
 - **Territory baru** tidak bisa ditambah lewat CSV; itu mengubah struktur. Lihat `SKEMA.md`.
+- **Impor bersifat semua-atau-tidak-sama-sekali.** Kalau ada satu baris janggal, seluruh impor
+  dibatalkan dan nol berkas berubah. Yang paling sering: persen ditulis `14.5` padahal formatnya
+  pecahan (`0.145`).
+- **`data/_sumber.json` wajib ikut diperbarui.** Isinya tampil di kaki halaman dashboard — kalau
+  lupa, orang yang menerima tautannya akan mengira data lama itu masih baru.

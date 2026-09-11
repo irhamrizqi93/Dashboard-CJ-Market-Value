@@ -7,19 +7,40 @@ Dashboard ini statis: tidak ada server, tidak ada database. Datanya hidup di dua
 lalu ditanam ke `index.html` oleh `build.py`.
 
 ```
-input/*.xlsx  (arsip mentah)
+input/mentah/YYYY-MM_*.xlsx   (arsip — tak pernah dibaca dashboard)
       │
-      ▼  disunting lewat Excel: data_csv.py export → edit → import
+      ▼  disunting lewat Excel: data_csv.py export → edit → import (divalidasi)
 data/market.json + data/hama_penyakit.json     ← SUMBER KEBENARAN
+data/_sumber.json                              ← kapan datanya, dari mana
       │
       ▼  build.py
-index.html   (blok di antara penanda <<<DATA>>> … <<</DATA>>>)
+index.html   blok data  <<<DATA>>> … <<</DATA>>>
+             kaki halaman <<<SUMBER>>> … <<</SUMBER>>>
 ```
+
+Satu perintah untuk memeriksa semuanya: **`python3 periksa.py`**.
 
 **Jangan pernah menyunting angka langsung di `index.html`.** Blok itu ditimpa setiap
 `build.py` jalan. `build.py --check` akan gagal kalau keduanya tidak sinkron.
 
 ---
+
+## `data/_sumber.json` — asal-usul data
+
+Bukan angka, tapi **wajib** ikut diperbarui tiap kali data berubah. Isinya tampil di kaki
+halaman dashboard, supaya orang yang menerima tautan/tangkapan layarnya tahu angkanya per kapan.
+
+| Kolom | Guna |
+|---|---|
+| `versi` | penanda singkat, mis. `2026-09` |
+| `tanggal_data` | `YYYY-MM-DD`. Tanggal **datanya**, bukan tanggal kamu menyuntingnya |
+| `sifat` | `estimasi` → dashboard memasang peringatan kuning otomatis |
+| `sumber` | dari survey/berkas apa; sebut nama berkas di `input/mentah/` |
+| `cakupan` | ringkas: berapa territory, komoditas, baris |
+| `catatan` | apa yang belum lengkap — isi jujur |
+| `riwayat` | satu baris tiap pembaruan: versi, tanggal, apa yang berubah |
+
+`periksa.py` menolak kalau `versi`, `tanggal_data`, `sumber`, atau `cakupan` kosong.
 
 ## `data/market.json` — Tab 1 (Market Value & Crop)
 
@@ -130,9 +151,8 @@ komoditas keenam berarti menyunting `index.html` juga.
 ## Setelah mengubah apa pun
 
 ```bash
-python3 data_csv.py --selftest   # data utuh bolak-balik CSV
-python3 build.py                 # tanam ke index.html
-python3 build.py --check         # pastikan sinkron
+python3 build.py       # tanam ke index.html
+python3 periksa.py     # periksa semuanya sekaligus — hijau baru boleh commit
 ```
 Lalu **buka `index.html` di browser** dan lihat angkanya. Pemeriksa otomatis cuma memastikan
-datanya tidak hilang di jalan — dia tidak tahu angkanya masuk akal atau tidak.
+datanya tidak hilang di jalan dan bentuknya masuk akal — dia tidak tahu angkanya benar atau tidak.
