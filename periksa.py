@@ -6,7 +6,8 @@ Menggantikan hafalan tiga perintah terpisah. Kalau ada yang merah, JANGAN commit
 Yang diperiksa:
   1. data/*.json masih JSON yang sah
   2. data/_sumber.json terisi — kapan datanya, dari mana
-  3. isi data cocok satu sama lain (territory & sub-territory tidak menggantung)
+  3. isi data cocok satu sama lain — territory/sub-territory tidak menggantung,
+     angka turunan masih sesuai bahannya, nama produk sudah seragam
   4. jalur CSV utuh bolak-balik, dan data rusak ditolak   (data_csv.py --selftest)
   5. index.html sinkron dengan data/                       (build.py --check)
 
@@ -71,6 +72,29 @@ def main() -> None:
                     if len(r.get('monthly') or []) != 12:
                         galat.append(f'hama_penyakit.json {kom}/{hk} / {r.get("subTerritory")}: '
                                      '`monthly` bukan 12 angka')
+        # angka turunan: kalau `ha` atau `cost` diubah tanpa menyesuaikan sisanya, drift-nya
+        # tidak kelihatan di mana pun — kartu statistik tetap tampil, cuma isinya salah
+        jt = next((x for x in market if 'crops' in x), None)
+        for kom, c in (jt or {}).get('crops', {}).items():
+            if c['ha'] * c['cost'] != c['totalMv']:
+                galat.append(f"market.json {kom}: totalMv {c['totalMv']:,} tidak sama dengan "
+                             f"ha × cost ({c['ha'] * c['cost']:,}). Perbaiki lewat agregat_jateng.csv")
+            if c['insec'] + c['fung'] + c['herb'] != c['totalMv']:
+                galat.append(f"market.json {kom}: insec+fung+herb tidak berjumlah totalMv "
+                             f"({c['insec'] + c['fung'] + c['herb']:,} vs {c['totalMv']:,})")
+
+        # nama produk gaya lama yang lolos masuk akan memecah porsi pasar diam-diam
+        pa = ROOT / 'data' / 'alias_produk.json'
+        if pa.exists():
+            peta = json.loads(pa.read_text(encoding='utf-8')).get('alias', {})
+            lama = sorted({p2['name'] for v in hama.values()
+                           for hp in v.get('hamaPenyakit', {}).values()
+                           for r in hp.get('rows', []) for p2 in (r.get('products') or [])
+                           if p2['name'] in peta})
+            if lama:
+                galat.append('nama produk gaya lama masih ada: ' + ', '.join(lama)
+                             + ' — jalankan data_csv.py export lalu import')
+
         tanpa_produk = sum(1 for v in hama.values() for hp in v.get('hamaPenyakit', {}).values()
                            for r in hp.get('rows', []) if not r.get('products'))
         print(f'   {len(market) - 1} territory · {baris} baris hama/penyakit '

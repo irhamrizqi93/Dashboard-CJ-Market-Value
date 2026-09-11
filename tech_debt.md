@@ -1,5 +1,14 @@
 # Tech Debt
 
+> **Pembaruan 2026-09-11 — Section 2 (mutu data & muatan).**
+> Ditutup: **#2** (CDN di-pin ke versi yang sedang dilayani) · **#6** (luas berdesimal
+> dibulatkan, kini sama dengan market.json) · **#8** (8 nama produk diseragamkan + tabel alias
+> yang diterapkan otomatis tiap impor) · **#12** (urutan init dibetulkan, grafik Tab 1 terisi
+> sejak halaman dibuka).
+> Diperiksa & ternyata SUDAH jujur, tinggal menunggu datanya: **#3**, **#5**.
+> Dijaga mesin walau belum diperbaiki strukturnya: **#13**.
+> Masih terbuka: **#7**, **#9**, **#11**.
+>
 > **Pembaruan 2026-09-11 — Section 1 (pisahkan data dari tampilan).**
 > Ditutup: **#1** (sudah dibuka di browser sungguhan, CDN asli termuat, nol galat halaman) ·
 > **#4** (template CSV usang diganti jembatan `data_csv.py` yang mengikuti skema nyata) ·
@@ -36,6 +45,8 @@ Environment sandbox sesi ini **tidak punya akses keluar** ke
 
 ## 2. Ikon Lucide masih pakai `unpkg.com/lucide@latest` (unpinned)
 
+> ✅ DITUTUP 11 Sep (S2) — di-pin ke versi yang memang sedang dilayani hari itu: Tailwind 3.4.17, Chart.js 4.5.1, Lucide 1.44.0. Tata letak dibanding sebelum-sesudah lewat kotak-batas 6 elemen kunci: identik sampai piksel. Catatan: lucide sudah terlanjur melompat ke 1.x, jadi `@latest` memang taruhan yang untung saja belum kalah.
+
 Pre-existing dari sebelum sesi ini, tidak diperbaiki: `index.html` masih memuat
 `https://unpkg.com/lucide@latest` — versi tidak di-pin, jadi tampilan ikon bisa
 berubah sewaktu-waktu tanpa peringatan kalau lucide merilis versi baru dengan
@@ -45,6 +56,8 @@ tidak di-pin versi.
 Rekomendasi: pin ke versi spesifik untuk kedua CDN ini di sesi berikutnya.
 
 ## 3. Data Pati (Tab 1 — Market Value & Crop) tidak lengkap
+
+> ✅ DIPERIKSA 11 Sep (S2) — bukan kerusakan. Badge "Data belum lengkap" memang tampil untuk 3 komoditas Pati. Tetap terbuka sebagai **gap data**, bukan utang teknis: baru tutup kalau angkanya ada.
 
 - Hanya Padi & Bawang Merah yang punya angka Ha untuk Pati (dari sheet
   beluk/ulat bawang di Excel). Jagung, Cabai, Kentang diisi `0` dengan badge
@@ -69,6 +82,8 @@ yang ada sekarang.
 
 ## 5. Gap data product share (5 dari 13 kombinasi tidak punya data produk)
 
+> ✅ DIPERIKSA 11 Sep (S2) — bukan kerusakan. "Data belum tersedia" tampil di tabel dan chart produk disembunyikan. Tetap terbuka sebagai **gap data**.
+
 Tidak ada data top-5 produk market leader untuk:
 - Kentang: Busuk Daun, Bercak Kering, Busuk Umbi, Layu Bakteri
 - Cabai: Patek Buah / Antraknosa
@@ -78,6 +93,8 @@ Ini gap data asli dari file Excel yang di-upload, bukan bug — perlu dilengkapi
 manual kalau datanya sudah ada.
 
 ## 6. Konsistensi format angka `area` antar dataset
+
+> ✅ DITUTUP 11 Sep (S2) — 4 baris berdesimal (Pati 102551.3, Rembang 38216.7 di beluk dan blast) dibulatkan; sekarang persis sama dengan market.json. `periksa.py` menjaga supaya tidak melenceng lagi.
 
 - Di `datasetTerritory` (Tab 1), Ha untuk sub-territory Pati sudah dibulatkan
   ke integer (mis. `102551`).
@@ -98,6 +115,8 @@ biasa yang selalu total 100%. Perlu keputusan desain: beri keterangan di UI,
 atau ubah metodologi agregasi.
 
 ## 8. Pencocokan nama produk berbasis string exact-match
+
+> ✅ DITUTUP 11 Sep (S2) — ternyata bukan 2 tabrakan, tapi **beda gaya penulisan pada 8 nama** yang 2 di antaranya kebetulan bertabrakan. Semua diseragamkan ke gaya bergspasi (26 dari 34 nama sudah memakainya). `data/alias_produk.json` diterapkan otomatis tiap impor, dan `periksa.py` menolak kalau ada gaya lama menyelinap masuk.
 
 Ranking top produk (baik di kartu overview maupun chart product share)
 mencocokkan nama produk secara string persis. Kalau ada variasi penulisan di
@@ -145,11 +164,17 @@ belum ada, jadi pengaman `if (!cropMarketChart) return;` langsung keluar tanpa b
 Akibatnya grafik baru terisi setelah pengguna menekan salah satu tombol filter. Tab 2 tidak kena
 karena `updateHamaPenyakitView()` memang dipanggil setelah `initCharts()`.
 
-Perbaikannya satu baris — pindahkan `initCharts()` ke atas `updateDashboardData()`.
-Dikerjakan di Section 2, supaya Section 1 murni pemindahan tempat tanpa perubahan perilaku.
+✅ **DITUTUP 11 Sep (S2).** `initCharts()` dipindah ke atas `updateDashboardData()`, dengan
+komentar di tempatnya supaya tidak ada yang mengembalikannya dengan niat baik. Dibuktikan:
+`cropMarketChart` dari `[0,0,0,0,0]` jadi `[1485, 275, 464, 270, 180]` dan `pesticideSplitChart`
+dari `[0,0,0]` jadi `[1115.3, 927.25, 631.45]` — cocok dengan kartu statistik di atasnya.
 
 ## 13. Angka turunan di "Semua JT" tidak ikut terhitung ulang
 
 `totalMv`, `insec`, `fung`, `herb` di entri `"Semua JT"` adalah hasil hitungan `ha × cost` yang
 disimpan. Kalau `ha` atau `cost` diubah, keempatnya tidak ikut berubah — harus disesuaikan manual
 lewat `agregat_jateng.csv`. Sebaiknya dihitung `build.py` saja, bukan disimpan.
+
+> 🛡️ **DIJAGA sejak 11 Sep (S2)**, walau strukturnya belum diubah. `periksa.py` menolak kalau
+> `ha × cost ≠ totalMv` atau `insec+fung+herb ≠ totalMv` — jadi drift-nya berisik, tidak lagi
+> diam-diam. Saat ini kelimanya masih cocok.
