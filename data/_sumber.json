@@ -12,6 +12,11 @@
       "versi": "2026-09",
       "tanggal": "2026-09-09",
       "ubah": "data awal — unggahan pertama ke dashboard"
+    },
+    {
+      "versi": "2026-09",
+      "tanggal": "2026-09-11",
+      "ubah": "pembersihan, angka survey tidak diubah: 8 nama produk diseragamkan gayanya (36 → 34 nama unik; Brofreya & Simodis yang tadinya terbelah kini menyatu), 4 luas berdesimal dibulatkan agar sama dengan market.json"
     }
   ]
 }

@@ -25,6 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 MARKET = ROOT / 'data' / 'market.json'
 HAMA = ROOT / 'data' / 'hama_penyakit.json'
+ALIAS_BERKAS = ROOT / 'data' / 'alias_produk.json'
 INPUT = ROOT / 'input'
 KOMODITAS = ['padi', 'jagung', 'bawang', 'cabai', 'kentang']
 BULAN = [f'm{i:02d}' for i in range(1, 13)]
@@ -32,6 +33,11 @@ BULAN = [f'm{i:02d}' for i in range(1, 13)]
 
 def _muat(p: Path):
     return json.loads(p.read_text(encoding='utf-8'))
+
+
+def alias() -> dict:
+    """Tabel penyeragaman nama produk. Kosong kalau berkasnya tak ada."""
+    return _muat(ALIAS_BERKAS).get('alias', {}) if ALIAS_BERKAS.exists() else {}
 
 
 def _simpan(p: Path, obj) -> None:
@@ -135,6 +141,7 @@ def _export_hp(d) -> Path:
 
 def _import_hp(baris) -> tuple[dict, int]:
     d: dict = {}
+    peta = alias()          # nama diseragamkan saat masuk, bukan cuma sekali di awal
     n = 0
     for r in baris:
         kom = d.setdefault(r['komoditas'], {'label': r['komoditas_label'],
@@ -142,7 +149,8 @@ def _import_hp(baris) -> tuple[dict, int]:
         hp = kom['hamaPenyakit'].setdefault(r['hp_key'], {
             'label': r['hp_label'], 'type': r['hp_type'],
             'productLabel': r['hp_product_label'], 'rows': []})
-        produk = [{'name': r[f'produk{i}_nama'].strip(), 'pct': _angka(r[f'produk{i}_pct'])}
+        produk = [{'name': peta.get(r[f'produk{i}_nama'].strip(), r[f'produk{i}_nama'].strip()),
+                   'pct': _angka(r[f'produk{i}_pct'])}
                   for i in range(1, 6) if r[f'produk{i}_nama'].strip()]
         hp['rows'].append({'territory': r['territory'], 'subTerritory': r['sub_territory'],
                            'district': r['district'], 'area': _angka(r['area_ha']),
@@ -246,6 +254,12 @@ def _validasi(d, luas, agg, hp) -> list[str]:
             elif pct:
                 galat.append(f'hama_penyakit.csv baris {no}: produk{i} ada porsinya '
                              'tapi namanya kosong')
+        peta = alias()
+        nama_produk = [peta.get(n2, n2) for n2 in
+                       ((r.get(f'produk{i}_nama') or '').strip() for i in range(1, 6)) if n2]
+        if len(nama_produk) != len(set(nama_produk)):
+            galat.append(f'hama_penyakit.csv baris {no}: ada produk yang sama dua kali '
+                         f'setelah penyeragaman nama → {nama_produk}')
         # label satu hama/penyakit harus konsisten di semua barisnya, kalau tidak yang
         # terakhir menang diam-diam
         kunci = (kom, hk)

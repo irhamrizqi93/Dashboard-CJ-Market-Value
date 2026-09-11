@@ -1,0 +1,15 @@
+{
+  "_petunjuk": "Penyeragaman nama produk. Diterapkan otomatis saat `data_csv.py import`, jadi data baru ikut seragam tanpa perlu diingat. periksa.py menolak kalau masih ada nama versi lama yang tersisa di data/.",
+  "_kenapa": "Nama yang sama ditulis dua gaya akan dihitung sebagai dua produk berbeda, sehingga porsi pasarnya terbelah dan peringkat market leader jadi salah. Contoh nyata: 'Brofreya 53SC' (34 baris) dan 'Brofreya 53 SC' (13 baris).",
+  "_gaya": "Baku = ada spasi sebelum kode formulasi: 'Nama <kekuatan> <KODE>'. Dipilih karena 26 dari 34 nama di data sudah memakai gaya ini.",
+  "alias": {
+    "Brofreya 53SC": "Brofreya 53 SC",
+    "Incipio 200SC": "Incipio 200 SC",
+    "Prevathon 50SC": "Prevathon 50 SC",
+    "Regent 50SC": "Regent 50 SC",
+    "Simodis 100DC": "Simodis 100 DC",
+    "Spontan 400SL": "Spontan 400 SL",
+    "Vayego 200SC": "Vayego 200 SC",
+    "Virtako 300SC": "Virtako 300 SC"
+  }
+}
