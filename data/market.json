@@ -1,0 +1,407 @@
+[
+  {
+    "name": "Semua JT",
+    "label": "Semua Jawa Tengah & DIY",
+    "subTerritories": [
+      "Semua Kab/Kota"
+    ],
+    "crops": {
+      "padi": {
+        "ha": 1650000,
+        "cost": 900000,
+        "totalMv": 1485000000000,
+        "insec": 594000000000,
+        "fung": 445500000000,
+        "herb": 445500000000
+      },
+      "jagung": {
+        "ha": 550000,
+        "cost": 500000,
+        "totalMv": 275000000000,
+        "insec": 110000000000,
+        "fung": 24750000000,
+        "herb": 140250000000
+      },
+      "bawang": {
+        "ha": 58000,
+        "cost": 8000000,
+        "totalMv": 464000000000,
+        "insec": 208800000000,
+        "fung": 232000000000,
+        "herb": 23200000000
+      },
+      "cabai": {
+        "ha": 45000,
+        "cost": 6000000,
+        "totalMv": 270000000000,
+        "insec": 148500000000,
+        "fung": 108000000000,
+        "herb": 13500000000
+      },
+      "kentang": {
+        "ha": 18000,
+        "cost": 10000000,
+        "totalMv": 180000000000,
+        "insec": 54000000000,
+        "fung": 117000000000,
+        "herb": 9000000000
+      }
+    }
+  },
+  {
+    "name": "Brebes",
+    "label": "Brebes (Pantura & Horti)",
+    "subTerritories": [
+      "Semua Sub Brebes",
+      "Kab. Brebes",
+      "Kab. Tegal",
+      "Kota Tegal",
+      "Purbalingga Atas"
+    ],
+    "subData": {
+      "Kab. Brebes": {
+        "padi": 68000,
+        "jagung": 12000,
+        "bawang": 32000,
+        "cabai": 4500,
+        "kentang": 500
+      },
+      "Kab. Tegal": {
+        "padi": 38000,
+        "jagung": 11000,
+        "bawang": 8500,
+        "cabai": 2200,
+        "kentang": 800
+      },
+      "Kota Tegal": {
+        "padi": 1200,
+        "jagung": 300,
+        "bawang": 200,
+        "cabai": 100,
+        "kentang": 0
+      },
+      "Purbalingga Atas": {
+        "padi": 14000,
+        "jagung": 5000,
+        "bawang": 1200,
+        "cabai": 1800,
+        "kentang": 1200
+      }
+    }
+  },
+  {
+    "name": "Pekalongan",
+    "label": "Pekalongan Raya",
+    "subTerritories": [
+      "Semua Sub Pekalongan",
+      "Pemalang",
+      "Pekalongan",
+      "Batang",
+      "Kendal"
+    ],
+    "subData": {
+      "Pemalang": {
+        "padi": 72000,
+        "jagung": 31000,
+        "bawang": 800,
+        "cabai": 3200,
+        "kentang": 400
+      },
+      "Pekalongan": {
+        "padi": 38000,
+        "jagung": 14000,
+        "bawang": 200,
+        "cabai": 1500,
+        "kentang": 600
+      },
+      "Batang": {
+        "padi": 39000,
+        "jagung": 18000,
+        "bawang": 1500,
+        "cabai": 1200,
+        "kentang": 1100
+      },
+      "Kendal": {
+        "padi": 46000,
+        "jagung": 22000,
+        "bawang": 1800,
+        "cabai": 2100,
+        "kentang": 200
+      }
+    }
+  },
+  {
+    "name": "Semarang",
+    "label": "Semarang & Kedungsepur",
+    "subTerritories": [
+      "Semua Sub Semarang",
+      "Grobogan",
+      "Kudus",
+      "Demak",
+      "Salatiga",
+      "Semarang"
+    ],
+    "subData": {
+      "Grobogan": {
+        "padi": 138000,
+        "jagung": 122000,
+        "bawang": 2200,
+        "cabai": 2800,
+        "kentang": 0
+      },
+      "Kudus": {
+        "padi": 28000,
+        "jagung": 6000,
+        "bawang": 100,
+        "cabai": 400,
+        "kentang": 0
+      },
+      "Demak": {
+        "padi": 112000,
+        "jagung": 24000,
+        "bawang": 4800,
+        "cabai": 1200,
+        "kentang": 0
+      },
+      "Salatiga": {
+        "padi": 4000,
+        "jagung": 1800,
+        "bawang": 50,
+        "cabai": 300,
+        "kentang": 0
+      },
+      "Semarang": {
+        "padi": 32000,
+        "jagung": 12000,
+        "bawang": 400,
+        "cabai": 1900,
+        "kentang": 300
+      }
+    }
+  },
+  {
+    "name": "Solo",
+    "label": "Solo Raya",
+    "subTerritories": [
+      "Semua Sub Solo",
+      "Sragen",
+      "Karanganyar",
+      "Sukoharjo",
+      "Klaten",
+      "Boyolali",
+      "Wonogiri"
+    ],
+    "subData": {
+      "Sragen": {
+        "padi": 115000,
+        "jagung": 28000,
+        "bawang": 400,
+        "cabai": 2200,
+        "kentang": 0
+      },
+      "Karanganyar": {
+        "padi": 48000,
+        "jagung": 14000,
+        "bawang": 200,
+        "cabai": 1800,
+        "kentang": 100
+      },
+      "Sukoharjo": {
+        "padi": 52000,
+        "jagung": 8000,
+        "bawang": 100,
+        "cabai": 1200,
+        "kentang": 0
+      },
+      "Klaten": {
+        "padi": 68000,
+        "jagung": 12000,
+        "bawang": 300,
+        "cabai": 1900,
+        "kentang": 0
+      },
+      "Boyolali": {
+        "padi": 49000,
+        "jagung": 26000,
+        "bawang": 600,
+        "cabai": 4200,
+        "kentang": 800
+      },
+      "Wonogiri": {
+        "padi": 62000,
+        "jagung": 54000,
+        "bawang": 200,
+        "cabai": 2800,
+        "kentang": 0
+      }
+    }
+  },
+  {
+    "name": "Kebumen",
+    "label": "Kebumen & DIY / Selatan",
+    "subTerritories": [
+      "Semua Sub Kebumen",
+      "Gunung Kidul",
+      "Sleman",
+      "Bantul",
+      "Kulonprogo",
+      "Jogja",
+      "Purworejo",
+      "Kebumen",
+      "Cilacap",
+      "Banyumas"
+    ],
+    "subData": {
+      "Gunung Kidul": {
+        "padi": 48000,
+        "jagung": 42000,
+        "bawang": 400,
+        "cabai": 1800,
+        "kentang": 0
+      },
+      "Sleman": {
+        "padi": 38000,
+        "jagung": 6000,
+        "bawang": 200,
+        "cabai": 1600,
+        "kentang": 0
+      },
+      "Bantul": {
+        "padi": 28000,
+        "jagung": 4000,
+        "bawang": 1200,
+        "cabai": 2400,
+        "kentang": 0
+      },
+      "Kulonprogo": {
+        "padi": 22000,
+        "jagung": 5000,
+        "bawang": 600,
+        "cabai": 2100,
+        "kentang": 0
+      },
+      "Jogja": {
+        "padi": 1000,
+        "jagung": 100,
+        "bawang": 0,
+        "cabai": 50,
+        "kentang": 0
+      },
+      "Purworejo": {
+        "padi": 54000,
+        "jagung": 11000,
+        "bawang": 300,
+        "cabai": 1500,
+        "kentang": 0
+      },
+      "Kebumen": {
+        "padi": 78000,
+        "jagung": 16000,
+        "bawang": 500,
+        "cabai": 2200,
+        "kentang": 0
+      },
+      "Cilacap": {
+        "padi": 124000,
+        "jagung": 18000,
+        "bawang": 300,
+        "cabai": 1400,
+        "kentang": 0
+      },
+      "Banyumas": {
+        "padi": 64000,
+        "jagung": 12000,
+        "bawang": 200,
+        "cabai": 1100,
+        "kentang": 0
+      }
+    }
+  },
+  {
+    "name": "Wonosobo",
+    "label": "Wonosobo (Dieng High)",
+    "subTerritories": [
+      "Semua Sub Wonosobo",
+      "Magelang",
+      "Temanggung",
+      "Wonosobo",
+      "Banjarnegara"
+    ],
+    "subData": {
+      "Magelang": {
+        "padi": 42000,
+        "jagung": 21000,
+        "bawang": 1200,
+        "cabai": 6800,
+        "kentang": 1800
+      },
+      "Temanggung": {
+        "padi": 26000,
+        "jagung": 18000,
+        "bawang": 2800,
+        "cabai": 5400,
+        "kentang": 2200
+      },
+      "Wonosobo": {
+        "padi": 22000,
+        "jagung": 14000,
+        "bawang": 1800,
+        "cabai": 3800,
+        "kentang": 4800
+      },
+      "Banjarnegara": {
+        "padi": 34000,
+        "jagung": 16000,
+        "bawang": 1100,
+        "cabai": 2900,
+        "kentang": 3400
+      }
+    }
+  },
+  {
+    "name": "Pati",
+    "label": "Pati Raya (Pantura Timur)",
+    "subTerritories": [
+      "Semua Sub Pati",
+      "Pati",
+      "Rembang",
+      "Jepara",
+      "Blora"
+    ],
+    "incompleteCrops": [
+      "jagung",
+      "cabai",
+      "kentang"
+    ],
+    "subData": {
+      "Pati": {
+        "padi": 102551,
+        "jagung": 0,
+        "bawang": 3800,
+        "cabai": 0,
+        "kentang": 0
+      },
+      "Rembang": {
+        "padi": 38217,
+        "jagung": 0,
+        "bawang": 700,
+        "cabai": 0,
+        "kentang": 0
+      },
+      "Jepara": {
+        "padi": 45085,
+        "jagung": 0,
+        "bawang": 500,
+        "cabai": 0,
+        "kentang": 0
+      },
+      "Blora": {
+        "padi": 84500,
+        "jagung": 0,
+        "bawang": 300,
+        "cabai": 0,
+        "kentang": 0
+      }
+    }
+  }
+]

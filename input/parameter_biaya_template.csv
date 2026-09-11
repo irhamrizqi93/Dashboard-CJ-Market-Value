@@ -1,6 +1,0 @@
-status,komoditas,cost_per_ha_idr,insektisida_pct,fungisida_pct,herbisida_pct
-CONTOH,padi,900000,0.40,0.30,0.30
-CONTOH,jagung,500000,0.40,0.09,0.51
-CONTOH,bawang,8000000,0.45,0.50,0.05
-CONTOH,cabai,6000000,0.55,0.40,0.05
-CONTOH,kentang,10000000,0.30,0.65,0.05

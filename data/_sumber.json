@@ -1,0 +1,17 @@
+{
+  "_petunjuk": "Asal-usul data. WAJIB diperbarui tiap kali data di data/*.json berubah. Dibaca build.py dan ditampilkan di kaki halaman dashboard, supaya orang yang menerima gambar/tautan ini tahu angkanya per kapan.",
+  "versi": "2026-09",
+  "tanggal_data": "2026-09-09",
+  "sifat": "estimasi",
+  "sumber": "Survey/estimasi internal — berkas mentah di input/mentah/2026-09_estimasi-serangan-hama-penyakit-pestisida.xlsx",
+  "disiapkan_oleh": "sinoeg2002-commits",
+  "cakupan": "7 territory Jawa Tengah & DIY · 5 komoditas · 13 hama/penyakit · 200 baris kabupaten",
+  "catatan": "Pati belum lengkap (jagung, cabai, kentang belum ada angka) dan 5 kombinasi komoditas/hama belum punya data produk market leader.",
+  "riwayat": [
+    {
+      "versi": "2026-09",
+      "tanggal": "2026-09-09",
+      "ubah": "data awal — unggahan pertama ke dashboard"
+    }
+  ]
+}

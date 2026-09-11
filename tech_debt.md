@@ -1,10 +1,21 @@
-# Tech Debt — Sesi "Analisis Hama, Penyakit & Product Share"
+# Tech Debt
+
+> **Pembaruan 2026-09-11 — Section 1 (pisahkan data dari tampilan).**
+> Ditutup: **#1** (sudah dibuka di browser sungguhan, CDN asli termuat, nol galat halaman) ·
+> **#4** (template CSV usang diganti jembatan `data_csv.py` yang mengikuti skema nyata) ·
+> **#10** (skema didokumentasikan di `SKEMA.md`).
+> Dibuka baru: **#12** — grafik Tab 1 kosong saat halaman pertama dibuka.
+> Sisanya masih terbuka dan dikerjakan di Section 2.
+
+## Riwayat awal — sesi "Analisis Hama, Penyakit & Product Share"
 
 Catatan hutang teknis dan hal yang belum tuntas dari sesi implementasi branch
 `tingkat-serangan`. Ditulis supaya sesi/branch berikutnya tidak perlu
 menebak-nebak apa yang sudah sengaja ditunda vs yang benar-benar terlewat.
 
 ## 1. Verifikasi visual production build belum pernah dilakukan
+
+> ✅ DITUTUP 11 Sep — `index.html` yang asli dirender di browser sungguhan (Chromium, CDN asli termuat, nol galat halaman). Semua angka kartu statistik identik dengan versi sebelum pemisahan data. **Justru pemeriksaan inilah yang menemukan butir #12.**
 
 Environment sandbox sesi ini **tidak punya akses keluar** ke
 `cdn.tailwindcss.com`, `cdn.jsdelivr.net`, `unpkg.com`, maupun
@@ -44,6 +55,8 @@ Rekomendasi: pin ke versi spesifik untuk kedua CDN ini di sesi berikutnya.
   `input/`.
 
 ## 4. Template CSV di folder `input/` sudah usang (stale)
+
+> ✅ DITUTUP 11 Sep — Template lama dihapus. Penggantinya `data_csv.py` — export/import CSV yang mengikuti skema nyata (200 baris hama/penyakit, 36 baris luas panen, 5 agregat), dengan uji bolak-balik supaya tidak ada angka hilang di jalan.
 
 Template `luas_panen_template.csv`, `parameter_biaya_template.csv`, dan
 `beluk_template.csv` dibuat di sesi sebelumnya untuk struktur data lama
@@ -103,6 +116,8 @@ sekarang, tapi sebaiknya di-refactor jadi flag terpisah (mis.
 
 ## 10. Belum ada dokumentasi skema data untuk kontributor berikutnya
 
+> ✅ DITUTUP 11 Sep — `SKEMA.md` di akar repo: struktur kedua berkas data + cara menambah wilayah/hama/komoditas.
+
 Tidak ada README/CLAUDE.md yang menjelaskan struktur `datasetHamaPenyakit`
 (bagaimana menambah komoditas baru, hama/penyakit baru, atau territory baru).
 Pola saat ini harus dipelajari langsung dari kode `index.html`. Perlu
@@ -114,3 +129,27 @@ Validasi sesi ini seluruhnya manual (skrip Node ad-hoc di `/tmp`, tidak
 disimpan ke repo). Tidak ada test suite atau CI check yang jalan otomatis di
 PR untuk mendeteksi regresi di kalkulasi (mis. rata-rata tertimbang, agregasi
 produk) kalau ada yang mengubah data atau logic di kemudian hari.
+
+## 12. Grafik Tab 1 kosong saat halaman pertama dibuka
+
+Ditemukan 11 Sep waktu merender `index.html` di browser sungguhan (butir #1).
+
+`cropMarketChart` dan `pesticideSplitChart` tampil kosong — sumbu 0–1.0 tanpa batang, pie tanpa
+irisan — padahal kartu statistik di atasnya menampilkan angka yang benar (Rp 2,67 Triliun dst).
+
+**Akarnya**, di penangan `DOMContentLoaded`: `updateDashboardData()` dipanggil **sebelum**
+`initCharts()`. `updateDashboardData()` memanggil `updateCharts()`, tapi saat itu objek grafiknya
+belum ada, jadi pengaman `if (!cropMarketChart) return;` langsung keluar tanpa bersuara. Sesudahnya
+`initCharts()` membuat grafik dengan data nol, dan tidak ada yang memperbaruinya lagi.
+
+Akibatnya grafik baru terisi setelah pengguna menekan salah satu tombol filter. Tab 2 tidak kena
+karena `updateHamaPenyakitView()` memang dipanggil setelah `initCharts()`.
+
+Perbaikannya satu baris — pindahkan `initCharts()` ke atas `updateDashboardData()`.
+Dikerjakan di Section 2, supaya Section 1 murni pemindahan tempat tanpa perubahan perilaku.
+
+## 13. Angka turunan di "Semua JT" tidak ikut terhitung ulang
+
+`totalMv`, `insec`, `fung`, `herb` di entri `"Semua JT"` adalah hasil hitungan `ha × cost` yang
+disimpan. Kalau `ha` atau `cost` diubah, keempatnya tidak ikut berubah — harus disesuaikan manual
+lewat `agregat_jateng.csv`. Sebaiknya dihitung `build.py` saja, bukan disimpan.
